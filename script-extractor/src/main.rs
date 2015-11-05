@@ -89,8 +89,8 @@ fn read_and_analyze_script(reader: Box<Read>) -> (ScriptProperties, Vec<(LineAtt
                     lines.push((current_line_attributes.clone(), current_text_buffer.clone()));
                 }
             }
+            Ok(_) => {},
             Err(e) => panic!(e),
-            _ => {}
         }
     }
 
