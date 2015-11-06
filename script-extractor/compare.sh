@@ -5,7 +5,6 @@
 #   Outputs an HTML page for comparing the real script
 #   to the one parsed from it.
 
-
 # unofficial strict mode: http://redsymbol.net/articles/unofficial-bash-strict-mode/
 set -euo pipefail
 
