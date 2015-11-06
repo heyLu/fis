@@ -80,6 +80,7 @@ for page in 1 2 3 4 5 $(($last_page / 2)) $((($last_page / 2) + 1)) $(($last_pag
         <img src="$page_png" />
       </div>
     </section>
+
 EOF
 done
 
