@@ -147,25 +147,27 @@ fn condense_script_demo(properties: ScriptProperties, lines: &Vec<(LineAttribute
         if last_left_position != attributes.left ||
            attributes.top - last_top_position > 18 ||
            attributes.top - last_top_position < 0 {
-            println!("");
-
-            match attributes.left {
-                k if (k == properties.direction_position)
-                    => print!("Regie:     "),
-                k if (k == properties.dialog_position)
-                    => print!("Dialog:         "),
-                k if (k == properties.speaker_direction_position)
-                    => print!("Dialoganweisung:  "),
-                k if (k == properties.speaker_position)
-                    => print!("Sprecher:            "),
-                _   => print!("------- "),
+            if ! (last_left_position == properties.speaker_direction_position ||
+                  last_left_position == properties.speaker_position) {
+                // empty line after last section
+                println!("");
             }
+        }
+
+        match attributes.left {
+            k if (k == properties.direction_position)
+                => println!("{}", line),
+            k if (k == properties.dialog_position)
+                => println!("          {}", line),
+            k if (k == properties.speaker_direction_position)
+                => println!("               {}", line),
+            k if (k == properties.speaker_position)
+                => println!("                    {}", line),
+            _   => println!("------- {}", line),
         }
 
         last_left_position = attributes.left;
         last_top_position = attributes.top;
-
-        print!("{} ", line);
     }
 }
 
