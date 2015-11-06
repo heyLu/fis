@@ -64,7 +64,10 @@ for page in 1 2 3 4 5 $(($last_page / 2)) $((($last_page / 2) + 1)) $(($last_pag
         pdftohtml -f $page -l $page -xml "$script_pdf" "$page_xml" > /dev/null
     fi
 
+    # continue if extracting fails
+    set +e
     page_parsed=$(./target/debug/script-extractor "$page_xml" | sed 's/$/\n/')
+    set -e
 
     cat <<EOF
     <section class="page">
