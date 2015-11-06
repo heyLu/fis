@@ -23,23 +23,28 @@ cat <<EOF
     <meta charset="utf-8" />
     <style>
       .page {
-        display: flex;
         margin-bottom: 3em;
       }
 
-      .page h2 {
-        width: 7em;
-        margin-right: 1em;
+      .side-by-side {
+        display: flex;
+      }
+
+      .side-by-side > div{
+        width: 50%;
       }
 
       .extracted pre {
-        width: 40em;
+        width: 39vw;
+        font-size: 1vw;
+        line-height: 1vw;
+        font-family: Courier;
+        margin: 6.5vw auto auto;
         white-space: pre-wrap;
       }
 
       .original img {
-        max-width: 30vw;
-        /*border: 1px solid black;*/
+        width: 100%;
       }
     </style>
   </head>
@@ -65,19 +70,19 @@ for page in 1 2 3 4 5 $(($last_page / 2)) $((($last_page / 2) + 1)) $(($last_pag
 
     # continue if extracting fails
     set +e
-    page_parsed=$(./target/debug/script-extractor "$page_xml" | sed 's/$/\n/')
+    page_parsed=$(./target/debug/script-extractor "$page_xml")
     set -e
 
     cat <<EOF
     <section class="page">
       <h2>Page $page</h2>
-
-      <div class="extracted">
-        <pre>$page_parsed</pre>
-      </div>
-
-      <div class="original">
-        <img src="$page_png" />
+      <div class="side-by-side">
+        <div class="extracted">
+          <pre>$page_parsed</pre>
+        </div>
+        <div class="original">
+          <img src="$page_png" />
+        </div>
       </div>
     </section>
 
