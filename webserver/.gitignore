@@ -1,1 +1,15 @@
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.settings/
+.loadpath
 /target
+# JDT-specific (Eclipse Java Development Tools)
+.classpath
+# Eclipse Core
+.project
+.settings/
