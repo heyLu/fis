@@ -21,6 +21,8 @@ public class RestAPI {
         Tmdb tmdb = new Tmdb();
         // Please don't forget to set api key
         tmdb.setApiKey("");
+        // load static files from public folder
+        staticFileLocation("/public");
         
         // Test Movie ID --> Avatar --> 19995
         
@@ -80,6 +82,11 @@ public class RestAPI {
         
         // Home dir, deliver root website
         get("/", (request, response) -> "root");
+        
+        // Filter catch root request a redirect to index html file
+        before("/", (request, response) -> {
+            response.redirect("index.html");
+        });
     }
 
 }

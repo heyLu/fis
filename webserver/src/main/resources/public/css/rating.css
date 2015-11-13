@@ -1,0 +1,26 @@
+.rating {
+  unicode-bidi: bidi-override;
+  font-size: 30px;
+}
+.rating span.star {
+  font-family: FontAwesome;
+  font-weight: normal;
+  font-style: normal;
+  display: inline-block;
+}
+.rating span.star:before {
+  content: "\f006";
+  padding-right: 1px;
+  color: #777777;
+}
+.rating span.star-yellow {
+  font-family: FontAwesome;
+  font-weight: normal;
+  font-style: normal;
+  display: inline-block;
+}
+.rating span.star-yellow:before {
+  content: "\f005";
+  padding-right: 1px;
+  color: #e3cf7a;
+}

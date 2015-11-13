@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="web interface for adding rarely languages to a crawler">
+    <meta name="author" content="Universität Leipzig">
+    <link rel="icon" href="img/favicon.ico">
+
+    <title>Explore Movie Scripts</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome CSS -->
+    <!-- link href="css/font-awesome.min.css" rel="stylesheet"> -->
+
+    <!-- Custom styles for this template -->
+    <link href="css/navbar-fixed-top.css" rel="stylesheet">
+
+    <!-- Custom styles for wizard -->
+    <link href="css/typeahead.css" rel="stylesheet">
+    <link href="css/flags.css" rel="stylesheet">
+    <link href="css/timeline.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a id="logoLink" class="navbar-brand" href="index.html">Explore Movie Scripts</a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li class=""><a href="index.html">Home</a></li>
+					<li class="active"><a href="#">Selected Movie: Avatar</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Lets's Start <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a id="menuAddLinks" href="movie.html">Movie Information</a></li>
+                            <li><a href="timeline.html">Movie Timeline</a></li>
+                            <li><a href="graph.html">Movie Flow Graph</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <!--/.nav-collapse -->
+        </div>
+    </nav>
+
+    <div class="container">
+
+        <!-- Main intro component  -->
+        <div id="intro" class="jumbotron">
+            <h1>Flow Graph of Actors of Avatar</h1>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12" style="overflow-x:scroll">
+				<img src="img/chart.png" height="" width="">
+            </div>
+        </div>
+        <!-- Intro End-->
+
+        <!-- Modal -->
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">Contact</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div style="margin-left:160px;">
+                            </br>
+                            <address>
+								<strong>Universität Leipzig</strong><br>
+								Fakultät für Mathematik und Informatik<br>
+								Institut für Informatik<br>
+								Johannisgasse 26<br>
+								04103 Leipzig<br>
+							</address>
+                            <address>
+								<strong>Telefon:</strong><br>
+								<abbr title="Phone">P:</abbr> (+49) - 341 - 97-32220
+							</address>
+                            <address>
+								<strong>E-Mail Adresse:</strong><br>
+								<a href="mailto:wort@informatik.uni-leipzig.de">contact</a>
+							</address>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <!-- /container -->
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/typeahead.bundle.min.js"></script>
+    <script src="js/typeaheadCustom.js"></script>
+    <script src="js/controller.js"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="js/ie10-viewport-bug-workaround.js"></script>
+</body>
+
+</html>
