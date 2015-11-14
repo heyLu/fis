@@ -1,6 +1,6 @@
-# Webserver
+# script-explorer
 
-Provide webserver and rest-api via spark 
+Provides a webinterface to explore movie scripts using spark.
 
 ## Quickstart
 
