@@ -4,6 +4,16 @@ Provide webserver and rest-api via spark
 
 ## Quickstart
 
-First insert API-Key and run RestAPI.java
+You neet to have Maven and Java 8 installed.
 
-After that connect to http://localhost:4567/ via webbrowser
+```
+$ mvn package
+$ java -jar target/wcm-prak-standalone.jar
+```
+
+Use your browser to open http://localhost:4567/.
+
+## Development
+
+If you want to use the TheMovieDB API, you have to manually add
+an API-key to the source of RestAPI.java for now.
