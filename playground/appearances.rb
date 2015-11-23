@@ -26,15 +26,10 @@ scenes = lines.reduce [] do |acc, l|
   end
 end
 
-#puts "#{characters.length} characters"
-#puts "#{scenes.length} scenes"
-
 appearances = scenes.map do |scene|
   {title: scene[:title],
    characters: characters_from(scene[:lines])}
 end
-
-#puts "\n" + "-" * 80 + "\n"
 
 # count how often each character appears together with others
 # in a scene.
@@ -50,7 +45,6 @@ appearances.each do |appearance|
     end
   end
 end
-#p amounts
 
 matrix = []
 i = 0
