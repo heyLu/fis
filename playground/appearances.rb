@@ -3,6 +3,11 @@
 require 'set'
 require 'json'
 
+if ARGV.length == 0
+  puts "Usage: #$0 <script.txt>"
+  exit 1
+end
+
 lines = File.open(ARGV[0]).each_line.to_a
 
 # returns a set of characters that have dialog in the given lines
