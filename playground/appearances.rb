@@ -93,9 +93,7 @@ puts <<EOF
           innerRadius = Math.min(width, height) * .41,
           outerRadius = innerRadius * 1.05;
 
-      var fill = d3.scale.linear()
-        .domain([0, 75])
-        .range(["#000000", "#ffffff"]);
+      var fill = d3.scale.category20();
 
       var svg = d3.select("body").append("svg")
         .attr("width", width)
