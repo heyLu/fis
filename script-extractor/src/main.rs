@@ -90,7 +90,7 @@ fn read_and_analyze_script(reader: Box<Read>) -> (ScriptProperties, Vec<(LineAtt
                 }
             }
             Ok(_) => {},
-            Err(e) => panic!(e),
+            Err(e) => panic!("Error parsing xml: {}", e),
         }
     }
 
