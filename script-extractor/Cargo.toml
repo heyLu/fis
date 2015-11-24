@@ -5,3 +5,4 @@ authors = ["Klemens Schölhorn <klemens@schoelhorn.eu>"]
 
 [dependencies]
 xml-rs = "0.2"
+regex = "0.1.41"

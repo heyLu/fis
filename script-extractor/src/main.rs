@@ -1,4 +1,5 @@
 extern crate xml;
+extern crate regex;
 
 use std::collections::HashMap;
 use std::env;
@@ -132,6 +133,121 @@ fn read_and_analyze_script(reader: Box<Read>) -> (ScriptProperties, Vec<(LineAtt
     (script_properties, lines)
 }
 
+#[derive(Debug, Clone)]
+enum ScenePart {
+    Direction {
+        direction: String,
+    },
+    Dialog {
+        speaker: String,
+        direction: String,
+        dialog: String,
+    }
+}
+
+#[derive(Debug, Clone)]
+enum ScriptPart {
+    Separator,
+    ScenePart(ScenePart),
+    LocationChange(String),
+    SceneChange,
+    PageNumber(i32),
+}
+
+fn is_location_change(line: &str) -> bool {
+    line.starts_with("INT.") || line.starts_with("EXT.")
+}
+
+fn is_scene_change(line: &str) -> bool {
+    line.starts_with("CUT TO")
+}
+
+fn extract_script_parts(properties: ScriptProperties, lines: &Vec<(LineAttributes, String)>)
+    -> Vec<ScriptPart> {
+    let mut script_parts: Vec<ScriptPart> = Vec::new();
+    let mut last_top_position = 0;
+    let is_page_number = regex::Regex::new(r"^[0-9]+\s*\.*$").unwrap();
+
+    for line in lines.iter() {
+        let &(ref attributes, ref line) = line;
+
+        if line.len() == 0 {
+            continue;
+        }
+
+        // check if a new section starts
+        if attributes.top - last_top_position > 18 ||
+           attributes.top - last_top_position < 0 {
+            // used to separate two consecutive script parts of the
+            // same type. this is just a implementation detail of
+            // the parsing. the Separator can be ignored later.
+            script_parts.push(ScriptPart::Separator);
+        }
+
+        if attributes.left == properties.direction_position {
+            if is_location_change(line) {
+                script_parts.push(ScriptPart::LocationChange(line.clone()));
+            } else {
+                // ensure the last script part is a direction
+                if let Some(&ScriptPart::ScenePart(ScenePart::Direction{..})) = script_parts.last() {
+                } else {
+                    script_parts.push(ScriptPart::ScenePart(
+                        ScenePart::Direction{
+                            direction: String::new()}));
+                }
+
+                if let Some(&mut ScriptPart::ScenePart(ScenePart::Direction{ref mut direction})) = script_parts.last_mut() {
+                    if direction.len() > 0 {
+                        direction.push(' ');
+                    }
+                    direction.push_str(line);
+                }
+            }
+        } else if attributes.left == properties.speaker_position ||
+                  attributes.left == properties.speaker_direction_position ||
+                  attributes.left == properties.dialog_position {
+            // Ensure the last script part is a dialog
+            if let Some(&ScriptPart::ScenePart(ScenePart::Dialog{..})) = script_parts.last() {
+            } else {
+                script_parts.push(ScriptPart::ScenePart(
+                    ScenePart::Dialog{
+                        speaker: String::new(),
+                        direction: String::new(),
+                        dialog: String::new()}));
+            }
+
+            // get the dialog, should never fail (see above)
+            if let Some(&mut ScriptPart::ScenePart(ScenePart::Dialog{ref mut speaker, ref mut direction, ref mut dialog})) = script_parts.last_mut() {
+                if attributes.left == properties.speaker_position {
+                    // there is only one speaker per dialog
+                    speaker.push_str(line);
+                } else if attributes.left == properties.speaker_direction_position {
+                    if direction.len() > 0 {
+                        direction.push(' ');
+                    }
+                    direction.push_str(line);
+                } else if attributes.left == properties.dialog_position {
+                    if dialog.len() > 0 {
+                        dialog.push(' ');
+                    }
+                    dialog.push_str(line);
+                }
+            }
+        } else {
+            if is_scene_change(line) {
+                script_parts.push(ScriptPart::SceneChange);
+            } else if is_page_number.is_match(line) {
+                // TODO: parse actual page number
+                script_parts.push(ScriptPart::PageNumber(0));
+            }
+        }
+
+        last_top_position = attributes.top;
+    }
+
+    script_parts
+}
+
 fn condense_script_demo(properties: ScriptProperties, lines: &Vec<(LineAttributes, String)>) {
     let mut last_left_position = 0;
     let mut last_top_position = 0;
@@ -180,4 +296,5 @@ fn main() {
     let (properties, lines) = read_and_analyze_script(buffered_file_reader);
 
     condense_script_demo(properties, &lines);
+    //println!("{:?}", extract_script_parts(properties, &lines));
 }
