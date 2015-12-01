@@ -313,47 +313,47 @@ fn extract_location(name: &str) -> Location {
 
 #[derive(Default, Clone, Debug)]
 struct Location {
-	kind: LocationType,
-	name: String,
-	parts: Vec<ScenePart>,
+    kind: LocationType,
+    name: String,
+    parts: Vec<ScenePart>,
 }
 
 type Scene = Vec<Location>;
 
 fn extract_scenes(script_parts: &Vec<ScriptPart>) -> Vec<Scene> {
-	let mut scenes = Vec::new();
+    let mut scenes = Vec::new();
 
     // scene with default (empty) location
-	let default_scene: Scene = vec![Default::default()];
-	scenes.push(default_scene.clone());
+    let default_scene: Scene = vec![Default::default()];
+    scenes.push(default_scene.clone());
 
-	for script_part in script_parts.iter() {
-		use ScriptPart::*;
-		match script_part {
-			&SceneChange => {
-				// unwrap is save, see default_scene
-				if scenes.last().unwrap().len() > 0 {
-					scenes.push(default_scene.clone());
-				}
-			}
-			&LocationChange(ref location) => {
-				// unwraps are safe, see default_scene
-				let mut current_scene = scenes.last_mut().unwrap();
+    for script_part in script_parts.iter() {
+        use ScriptPart::*;
+        match script_part {
+            &SceneChange => {
+                // unwrap is save, see default_scene
+                if scenes.last().unwrap().len() > 0 {
+                    scenes.push(default_scene.clone());
+                }
+            }
+            &LocationChange(ref location) => {
+                // unwraps are safe, see default_scene
+                let mut current_scene = scenes.last_mut().unwrap();
 
-				if current_scene.last().unwrap().parts.len() == 0 {
-					current_scene.pop();
-				}
+                if current_scene.last().unwrap().parts.len() == 0 {
+                    current_scene.pop();
+                }
                 current_scene.push(extract_location(location));
-			}
+            }
             &ScenePart(ref scene_part) => {
                 let scene_parts = &mut scenes.last_mut().unwrap().last_mut().unwrap().parts;
                 scene_parts.push(scene_part.clone());
             }
-			&Separator => {} //ignore
-		}
-	}
+            &Separator => {} //ignore
+        }
+    }
 
-	scenes
+    scenes
 }
 
 #[allow(dead_code)]
