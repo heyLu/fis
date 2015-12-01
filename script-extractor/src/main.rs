@@ -144,6 +144,12 @@ fn read_and_analyze_script(reader: Box<Read>) -> (ScriptProperties, Vec<(LineAtt
 }
 
 #[derive(Debug, Clone)]
+enum DialogPart {
+    Dialog(String),
+    Direction(String),
+}
+
+#[derive(Debug, Clone)]
 enum ScenePart {
     Direction {
         direction: String,
@@ -151,8 +157,7 @@ enum ScenePart {
     },
     Dialog {
         speaker: String,
-        direction: String,
-        dialog: String,
+        dialog: Vec<DialogPart>,
         page: u32,
     }
 }
@@ -224,27 +229,40 @@ fn extract_script_parts(properties: ScriptProperties, lines: &Vec<(LineAttribute
                 script_parts.push(ScriptPart::ScenePart(
                     ScenePart::Dialog{
                         speaker: String::new(),
-                        direction: String::new(),
-                        dialog: String::new(),
+                        dialog: Vec::new(),
                         page: attributes.page,
                     }));
             }
 
             // get the dialog, should never fail (see above)
-            if let Some(&mut ScriptPart::ScenePart(ScenePart::Dialog{ref mut speaker, ref mut direction, ref mut dialog, ..})) = script_parts.last_mut() {
+            if let Some(&mut ScriptPart::ScenePart(ScenePart::Dialog{ref mut speaker, ref mut dialog, ..})) = script_parts.last_mut() {
                 if attributes.left == properties.speaker_position {
                     // there is only one speaker per dialog
                     speaker.push_str(line);
                 } else if attributes.left == properties.speaker_direction_position {
-                    if direction.len() > 0 {
-                        direction.push(' ');
+                    if let Some(&DialogPart::Direction(_)) = dialog.last() {
+                    } else {
+                        dialog.push(DialogPart::Direction(String::new()));
                     }
-                    direction.push_str(line);
+
+                    if let Some(&mut DialogPart::Direction(ref mut direction)) = dialog.last_mut() {
+                        if direction.len() > 0 {
+                            direction.push(' ');
+                        }
+                        direction.push_str(line);
+                    }
                 } else if attributes.left == properties.dialog_position {
-                    if dialog.len() > 0 {
-                        dialog.push(' ');
+                    if let Some(&DialogPart::Dialog(_)) = dialog.last() {
+                    } else {
+                        dialog.push(DialogPart::Dialog(String::new()));
                     }
-                    dialog.push_str(line);
+
+                    if let Some(&mut DialogPart::Dialog(ref mut dialog)) = dialog.last_mut() {
+                        if dialog.len() > 0 {
+                            dialog.push(' ');
+                        }
+                        dialog.push_str(line);
+                    }
                 }
             }
         } else {
