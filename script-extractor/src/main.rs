@@ -248,6 +248,55 @@ fn extract_script_parts(properties: ScriptProperties, lines: &Vec<(LineAttribute
     script_parts
 }
 
+#[derive(Default, Clone, Debug)]
+struct Location {
+	internal: bool,
+	name: String,
+	parts: Vec<ScenePart>,
+}
+
+type Scene = Vec<Location>;
+
+fn extract_scenes(script_parts: &Vec<ScriptPart>) -> Vec<Scene> {
+	let mut scenes = Vec::new();
+	let mut current_page_numer = 0;
+
+    // scene with default (empty) location
+	let default_scene: Scene = vec![Default::default()];
+	scenes.push(default_scene.clone());
+
+	for script_part in script_parts.iter() {
+		use ScriptPart::*;
+		match script_part {
+			&PageNumber(page_number) => current_page_numer = page_number,
+			&SceneChange => {
+				// unwrap is save, see default_scene
+				if scenes.last().unwrap().len() > 0 {
+					scenes.push(default_scene.clone());
+				}
+			}
+			&LocationChange(ref location) => {
+				// unwraps are safe, see default_scene
+				let mut current_scene = scenes.last_mut().unwrap();
+
+				if current_scene.last().unwrap().parts.len() == 0 {
+					current_scene.pop();
+				}
+                // TODO: Parse INT./EXT.
+				current_scene.push(Location {name: location.clone(), ..Default::default()})
+			}
+            &ScenePart(ref scene_part) => {
+                let scene_parts = &mut scenes.last_mut().unwrap().last_mut().unwrap().parts;
+                scene_parts.push(scene_part.clone());
+            }
+			&Separator => {} //ignore
+		}
+	}
+
+	scenes
+}
+
+#[allow(dead_code)]
 fn condense_script_demo(properties: ScriptProperties, lines: &Vec<(LineAttributes, String)>) {
     let mut last_left_position = 0;
     let mut last_top_position = 0;
@@ -295,6 +344,6 @@ fn main() {
 
     let (properties, lines) = read_and_analyze_script(buffered_file_reader);
 
-    condense_script_demo(properties, &lines);
-    //println!("{:?}", extract_script_parts(properties, &lines));
+    //condense_script_demo(properties, &lines);
+    println!("{:#?}", extract_scenes(&extract_script_parts(properties, &lines)));
 }
