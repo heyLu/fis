@@ -15,6 +15,7 @@ struct LineAttributes {
     top: i32,
     left: i32,
     height: i32,
+    page: u32,
 }
 
 fn read_attributes(attr_list: &Vec<OwnedAttribute>) -> LineAttributes {
@@ -52,6 +53,7 @@ fn read_and_analyze_script(reader: Box<Read>) -> (ScriptProperties, Vec<(LineAtt
     // states for the streaming xml parsing
     let mut current_line_attributes: LineAttributes = Default::default();
     let mut current_text_buffer = String::new();
+    let mut current_page_number = 0;
     let mut last_line_height = 0;
 
     let parser = EventReader::new(reader);
@@ -75,6 +77,13 @@ fn read_and_analyze_script(reader: Box<Read>) -> (ScriptProperties, Vec<(LineAtt
                     }
                     "page" => {
                         last_line_height = 0;
+
+                        for attr in attributes {
+                            if "number" == attr.name.local_name {
+                                current_page_number = attr.value.parse().unwrap();
+                                break;
+                            }
+                        }
                     }
                     _ => {}
                 }
@@ -87,6 +96,7 @@ fn read_and_analyze_script(reader: Box<Read>) -> (ScriptProperties, Vec<(LineAtt
             }
             Ok(XmlEvent::EndElement { name, .. }) => {
                 if name.local_name == "text" {
+                    current_line_attributes.page = current_page_number;
                     lines.push((current_line_attributes.clone(), current_text_buffer.clone()));
                 }
             }
@@ -137,11 +147,13 @@ fn read_and_analyze_script(reader: Box<Read>) -> (ScriptProperties, Vec<(LineAtt
 enum ScenePart {
     Direction {
         direction: String,
+        page: u32,
     },
     Dialog {
         speaker: String,
         direction: String,
         dialog: String,
+        page: u32,
     }
 }
 
@@ -151,7 +163,6 @@ enum ScriptPart {
     ScenePart(ScenePart),
     LocationChange(String),
     SceneChange,
-    PageNumber(i32),
 }
 
 fn is_location_change(line: &str) -> bool {
@@ -166,7 +177,6 @@ fn extract_script_parts(properties: ScriptProperties, lines: &Vec<(LineAttribute
     -> Vec<ScriptPart> {
     let mut script_parts: Vec<ScriptPart> = Vec::new();
     let mut last_top_position = 0;
-    let is_page_number = regex::Regex::new(r"^[0-9]+\s*\.*$").unwrap();
 
     for line in lines.iter() {
         let &(ref attributes, ref line) = line;
@@ -193,10 +203,12 @@ fn extract_script_parts(properties: ScriptProperties, lines: &Vec<(LineAttribute
                 } else {
                     script_parts.push(ScriptPart::ScenePart(
                         ScenePart::Direction{
-                            direction: String::new()}));
+                            direction: String::new(),
+                            page: attributes.page,
+                        }));
                 }
 
-                if let Some(&mut ScriptPart::ScenePart(ScenePart::Direction{ref mut direction})) = script_parts.last_mut() {
+                if let Some(&mut ScriptPart::ScenePart(ScenePart::Direction{ref mut direction, ..})) = script_parts.last_mut() {
                     if direction.len() > 0 {
                         direction.push(' ');
                     }
@@ -213,11 +225,13 @@ fn extract_script_parts(properties: ScriptProperties, lines: &Vec<(LineAttribute
                     ScenePart::Dialog{
                         speaker: String::new(),
                         direction: String::new(),
-                        dialog: String::new()}));
+                        dialog: String::new(),
+                        page: attributes.page,
+                    }));
             }
 
             // get the dialog, should never fail (see above)
-            if let Some(&mut ScriptPart::ScenePart(ScenePart::Dialog{ref mut speaker, ref mut direction, ref mut dialog})) = script_parts.last_mut() {
+            if let Some(&mut ScriptPart::ScenePart(ScenePart::Dialog{ref mut speaker, ref mut direction, ref mut dialog, ..})) = script_parts.last_mut() {
                 if attributes.left == properties.speaker_position {
                     // there is only one speaker per dialog
                     speaker.push_str(line);
@@ -236,9 +250,6 @@ fn extract_script_parts(properties: ScriptProperties, lines: &Vec<(LineAttribute
         } else {
             if is_scene_change(line) {
                 script_parts.push(ScriptPart::SceneChange);
-            } else if is_page_number.is_match(line) {
-                // TODO: parse actual page number
-                script_parts.push(ScriptPart::PageNumber(0));
             }
         }
 
@@ -259,7 +270,6 @@ type Scene = Vec<Location>;
 
 fn extract_scenes(script_parts: &Vec<ScriptPart>) -> Vec<Scene> {
 	let mut scenes = Vec::new();
-	let mut current_page_numer = 0;
 
     // scene with default (empty) location
 	let default_scene: Scene = vec![Default::default()];
@@ -268,7 +278,6 @@ fn extract_scenes(script_parts: &Vec<ScriptPart>) -> Vec<Scene> {
 	for script_part in script_parts.iter() {
 		use ScriptPart::*;
 		match script_part {
-			&PageNumber(page_number) => current_page_numer = page_number,
 			&SceneChange => {
 				// unwrap is save, see default_scene
 				if scenes.last().unwrap().len() > 0 {
