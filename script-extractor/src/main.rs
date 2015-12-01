@@ -277,9 +277,43 @@ fn extract_script_parts(properties: ScriptProperties, lines: &Vec<(LineAttribute
     script_parts
 }
 
+#[derive(Clone, Debug)]
+enum LocationType {
+    Undefined,
+    Internal,
+    External,
+    InternalExternal,
+}
+
+impl Default for LocationType {
+    fn default() -> LocationType { LocationType::Undefined }
+}
+
+fn extract_location(name: &str) -> Location {
+    let pattern = regex::Regex::new(r"(?:(?P<kind>INT\.|EXT\.|INT\./EXT\.)\s+)?(?P<location>.+)").unwrap();
+    let mut location: Location = Default::default();
+
+    if let Some(captures) = pattern.captures(name) {
+        location.name = captures.name("location").unwrap().to_string();
+
+        if let Some(location_kind) = captures.name("kind") {
+            location.kind = match location_kind {
+                "INT." => LocationType::Internal,
+                "EXT." => LocationType::External,
+                "INT./EXT." => LocationType::InternalExternal,
+                _ => LocationType::Undefined,
+            };
+        }
+    } else {
+        location.name = name.to_string();
+    }
+
+    location
+}
+
 #[derive(Default, Clone, Debug)]
 struct Location {
-	internal: bool,
+	kind: LocationType,
 	name: String,
 	parts: Vec<ScenePart>,
 }
@@ -309,8 +343,7 @@ fn extract_scenes(script_parts: &Vec<ScriptPart>) -> Vec<Scene> {
 				if current_scene.last().unwrap().parts.len() == 0 {
 					current_scene.pop();
 				}
-                // TODO: Parse INT./EXT.
-				current_scene.push(Location {name: location.clone(), ..Default::default()})
+                current_scene.push(extract_location(location));
 			}
             &ScenePart(ref scene_part) => {
                 let scene_parts = &mut scenes.last_mut().unwrap().last_mut().unwrap().parts;
