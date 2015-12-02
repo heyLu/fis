@@ -450,46 +450,6 @@ fn format_scenes<W: Write>(scenes: &Vec<Scene>, output: &mut W) -> XmlResult<()>
     Ok(())
 }
 
-#[allow(dead_code)]
-fn condense_script_demo(properties: ScriptProperties, lines: &Vec<(LineAttributes, String)>) {
-    let mut last_left_position = 0;
-    let mut last_top_position = 0;
-
-    for line in lines.iter() {
-        let &(ref attributes, ref line) = line;
-
-        if line.len() == 0 {
-            continue;
-        }
-
-        // start new section
-        if last_left_position != attributes.left ||
-           attributes.top - last_top_position > 18 ||
-           attributes.top - last_top_position < 0 {
-            if ! (last_left_position == properties.speaker_direction_position ||
-                  last_left_position == properties.speaker_position) {
-                // empty line after last section
-                println!("");
-            }
-        }
-
-        match attributes.left {
-            k if (k == properties.direction_position)
-                => println!("{}", line),
-            k if (k == properties.dialog_position)
-                => println!("          {}", line),
-            k if (k == properties.speaker_direction_position)
-                => println!("               {}", line),
-            k if (k == properties.speaker_position)
-                => println!("                    {}", line),
-            _   => println!("------- {}", line),
-        }
-
-        last_left_position = attributes.left;
-        last_top_position = attributes.top;
-    }
-}
-
 fn main() {
     let xml_file_name = env::args().skip(1).next().expect("No input file given");
 
@@ -498,6 +458,5 @@ fn main() {
 
     let (properties, lines) = read_and_analyze_script(buffered_file_reader);
 
-    //condense_script_demo(properties, &lines);
     format_scenes(&extract_scenes(&extract_script_parts(properties, &lines)), &mut std::io::stdout()).unwrap();
 }
