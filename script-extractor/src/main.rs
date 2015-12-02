@@ -5,9 +5,12 @@ use std::collections::HashMap;
 use std::env;
 use std::fs::File;
 use std::io::Read;
+use std::io::Write;
 use std::io::BufReader;
 
-use xml::reader::{EventReader, XmlEvent};
+use xml::{EventReader, EventWriter};
+use xml::reader::XmlEvent;
+use xml::writer::Result as XmlResult;
 use xml::attribute::OwnedAttribute;
 
 #[derive(Debug, Clone, Default)]
@@ -289,6 +292,18 @@ impl Default for LocationType {
     fn default() -> LocationType { LocationType::Undefined }
 }
 
+impl std::ops::Deref for LocationType {
+    type Target = str;
+    fn deref(&self) -> &str {
+        match *self {
+            LocationType::Undefined => "",
+            LocationType::Internal => "internal",
+            LocationType::External => "external",
+            LocationType::InternalExternal => "internal,external",
+        }
+    }
+}
+
 fn extract_location(name: &str) -> Location {
     let pattern = regex::Regex::new(r"(?:(?P<kind>INT\.|EXT\.|INT\./EXT\.)\s+)?(?P<location>.+)").unwrap();
     let mut location: Location = Default::default();
@@ -356,6 +371,85 @@ fn extract_scenes(script_parts: &Vec<ScriptPart>) -> Vec<Scene> {
     scenes
 }
 
+fn format_scene_parts<W: Write>(scene_parts: &Vec<ScenePart>, writer: &mut EventWriter<W>) -> XmlResult<()> {
+    use xml::writer::XmlEvent;
+
+    for part in scene_parts.iter() {
+        match part {
+            &ScenePart::Direction { ref direction, ref page } => {
+                try!(writer.write(XmlEvent::start_element("direction")
+                                           .attr("page", page.to_string().as_ref())));
+
+                try!(writer.write(XmlEvent::characters(direction)));
+
+                try!(writer.write(XmlEvent::end_element()));
+            }
+            &ScenePart::Dialog { ref speaker, ref dialog, ref page } => {
+                try!(writer.write(XmlEvent::start_element("dialog")
+                                           .attr("speaker", speaker)
+                                           .attr("page", page.to_string().as_ref())));
+
+                for (i, dialog_part) in dialog.iter().enumerate() {
+                    match dialog_part {
+                        &DialogPart::Dialog(ref dialog) => {
+                            try!(writer.write(XmlEvent::characters(dialog)));
+                        }
+                        &DialogPart::Direction(ref direction) => {
+                            try!(writer.write(XmlEvent::start_element("direction")));
+                            try!(writer.write(XmlEvent::characters(direction)));
+                            try!(writer.write(XmlEvent::end_element()));
+                        }
+                    }
+
+                    if i + 1 != dialog.len() {
+                        try!(writer.write(XmlEvent::characters(" ")));
+                    }
+                }
+
+                try!(writer.write(XmlEvent::end_element()));
+            }
+        }
+    }
+
+    Ok(())
+}
+
+fn format_scenes<W: Write>(scenes: &Vec<Scene>, output: &mut W) -> XmlResult<()> {
+    use xml::writer::XmlEvent;
+
+    let mut writer = xml::EmitterConfig::new().perform_indent(true).create_writer(output);
+
+    try!(writer.write(XmlEvent::start_element("script")));
+
+    for scene in scenes.iter() {
+        try!(writer.write(XmlEvent::start_element("scene")));
+
+        for location in scene.iter() {
+            let mut location_event = XmlEvent::start_element("location");
+            if location.name.len() > 0 {
+                location_event = location_event.attr("name", &location.name);
+            }
+            match location.kind {
+                LocationType::Undefined => {}
+                _ => {
+                    location_event = location_event.attr("kind", &location.kind);
+                }
+            }
+            try!(writer.write(location_event));
+
+            try!(format_scene_parts(&location.parts, &mut writer));
+
+            try!(writer.write(XmlEvent::end_element()));
+        }
+
+        try!(writer.write(XmlEvent::end_element()));
+    }
+
+    try!(writer.write(XmlEvent::end_element()));
+
+    Ok(())
+}
+
 #[allow(dead_code)]
 fn condense_script_demo(properties: ScriptProperties, lines: &Vec<(LineAttributes, String)>) {
     let mut last_left_position = 0;
@@ -405,5 +499,5 @@ fn main() {
     let (properties, lines) = read_and_analyze_script(buffered_file_reader);
 
     //condense_script_demo(properties, &lines);
-    println!("{:#?}", extract_scenes(&extract_script_parts(properties, &lines)));
+    format_scenes(&extract_scenes(&extract_script_parts(properties, &lines)), &mut std::io::stdout()).unwrap();
 }
