@@ -1,8 +1,8 @@
 extern crate xml;
 extern crate regex;
 
-mod parse;
-mod serialize;
+pub mod parse;
+pub mod serialize;
 
 use std::env;
 use std::fs::File;
@@ -14,7 +14,7 @@ fn main() {
     let file_reader = File::open(xml_file_name).expect("Could not open file");
     let buffered_file_reader = Box::new(BufReader::new(file_reader));
 
-    let (properties, lines) = parse::read_and_analyze_script(buffered_file_reader);
+    let scenes = parse::parse_script(buffered_file_reader);
 
-    serialize::xml::format_scenes(&parse::extract_scenes(&parse::extract_script_parts(properties, &lines)), &mut std::io::stdout()).unwrap();
+    serialize::xml::format_script(&scenes, &mut std::io::stdout()).unwrap();
 }

@@ -1,13 +1,107 @@
+//! Parsing scripts into `Script`s.
+//!
+//! This module provides functions to parse scripts which have been extracted
+//! from pdfs into `Script`s.
+
+/// A `Script` consists of a list of `Scene`s.
+pub type Script = Vec<Scene>;
+
+/// A `Scene` consists of a list of `Location`s.
+///
+/// Some scripts do not distinguish between scenes and locations and will
+/// thus only have one `Scene` with several `Location`s or several `Scene`s
+/// with each containing only one `Location`.
+pub type Scene = Vec<Location>;
+
+/// Represents a location in which part of a `Scene` takes place.
+#[derive(Default, Clone, Debug)]
+pub struct Location {
+    /// The kind of the location (like internal)
+    pub kind: LocationType,
+    /// The name of the location
+    pub name: String,
+    /// The `Dialog` and `Direction` which take place in this location
+    pub parts: Vec<ScenePart>,
+}
+
+/// Represents the types of locations often used in scripts.
+#[derive(Clone, Debug)]
+pub enum LocationType {
+    Undefined,
+    Internal,
+    External,
+    InternalExternal,
+}
+
+/// A `Scene` consists of `Direction`s and `Dialog`s.
+///
+/// Each `ScenePart` carries the page number from which it was extracted
+/// originally.
+#[derive(Debug, Clone)]
+pub enum ScenePart {
+    Direction {
+        direction: String,
+        page: u32,
+    },
+    Dialog {
+        speaker: String,
+        dialog: Vec<DialogPart>,
+        page: u32,
+    }
+}
+
+/// The different parts of a `Dialog`.
+///
+/// A `DialogPart` can have inline `Direction`s in between normal `Dialog`.
+#[derive(Debug, Clone)]
+pub enum DialogPart {
+    /// What a speaker says
+    Dialog(String),
+    /// How or to whom the speaker says it
+    Direction(String),
+}
+
+/// The default for `LocationType` is `Undefined`.
+impl Default for LocationType {
+    fn default() -> LocationType { LocationType::Undefined }
+}
+
+/// Converts the `LocationType` into a string representation.
+///
+/// `Undefined` becomes the empty string.
+impl Into<&'static str> for LocationType {
+    fn into(self) -> &'static str {
+        match self {
+            LocationType::Undefined => "",
+            LocationType::Internal => "internal",
+            LocationType::External => "external",
+            LocationType::InternalExternal => "internal,external",
+        }
+    }
+}
+
+/// Parses the given script into a `Script`.
+///
+/// Reads the parsed pdf of a script in the poppler xml-format
+/// (`pdftohtml --xml`) from `reader` and parses it into a `Script`.
+pub fn parse_script(reader: Box<Read>) -> Script {
+    let (properties, lines) = read_and_analyze_script(reader);
+
+    let parts = extract_script_parts(properties, &lines);
+
+    extract_scenes(&parts)
+}
+
+
 use regex::Regex;
 use std::collections::HashMap;
 use std::io::Read;
-use std::ops::Deref;
 use xml::EventReader;
 use xml::attribute::OwnedAttribute;
 use xml::reader::XmlEvent;
 
 #[derive(Debug, Clone, Default)]
-pub struct LineAttributes {
+struct LineAttributes {
     top: i32,
     left: i32,
     height: i32,
@@ -30,7 +124,7 @@ fn read_attributes(attr_list: &Vec<OwnedAttribute>) -> LineAttributes {
 }
 
 #[derive(Debug, Clone, Default)]
-pub struct ScriptProperties {
+struct ScriptProperties {
     direction_position: i32,
     dialog_position: i32,
     speaker_direction_position: i32,
@@ -38,7 +132,7 @@ pub struct ScriptProperties {
     intra_paragraph_line_height: i32,
 }
 
-pub fn read_and_analyze_script(reader: Box<Read>) -> (ScriptProperties, Vec<(LineAttributes, String)>) {
+fn read_and_analyze_script(reader: Box<Read>) -> (ScriptProperties, Vec<(LineAttributes, String)>) {
     let mut script_properties: ScriptProperties = Default::default();
     let mut lines: Vec<(LineAttributes, String)> = Vec::new();
 
@@ -140,26 +234,7 @@ pub fn read_and_analyze_script(reader: Box<Read>) -> (ScriptProperties, Vec<(Lin
 }
 
 #[derive(Debug, Clone)]
-pub enum DialogPart {
-    Dialog(String),
-    Direction(String),
-}
-
-#[derive(Debug, Clone)]
-pub enum ScenePart {
-    Direction {
-        direction: String,
-        page: u32,
-    },
-    Dialog {
-        speaker: String,
-        dialog: Vec<DialogPart>,
-        page: u32,
-    }
-}
-
-#[derive(Debug, Clone)]
-pub enum ScriptPart {
+enum ScriptPart {
     Separator,
     ScenePart(ScenePart),
     LocationChange(String),
@@ -174,7 +249,7 @@ fn is_scene_change(line: &str) -> bool {
     line.starts_with("CUT TO")
 }
 
-pub fn extract_script_parts(properties: ScriptProperties, lines: &Vec<(LineAttributes, String)>)
+fn extract_script_parts(properties: ScriptProperties, lines: &Vec<(LineAttributes, String)>)
     -> Vec<ScriptPart> {
     let mut script_parts: Vec<ScriptPart> = Vec::new();
     let mut last_top_position = 0;
@@ -273,30 +348,6 @@ pub fn extract_script_parts(properties: ScriptProperties, lines: &Vec<(LineAttri
     script_parts
 }
 
-#[derive(Clone, Debug)]
-pub enum LocationType {
-    Undefined,
-    Internal,
-    External,
-    InternalExternal,
-}
-
-impl Default for LocationType {
-    fn default() -> LocationType { LocationType::Undefined }
-}
-
-impl Deref for LocationType {
-    type Target = str;
-    fn deref(&self) -> &str {
-        match *self {
-            LocationType::Undefined => "",
-            LocationType::Internal => "internal",
-            LocationType::External => "external",
-            LocationType::InternalExternal => "internal,external",
-        }
-    }
-}
-
 fn extract_location(name: &str) -> Location {
     let pattern = Regex::new(r"(?:(?P<kind>INT\.|EXT\.|INT\./EXT\.)\s+)?(?P<location>.+)").unwrap();
     let mut location: Location = Default::default();
@@ -319,16 +370,7 @@ fn extract_location(name: &str) -> Location {
     location
 }
 
-#[derive(Default, Clone, Debug)]
-pub struct Location {
-    pub kind: LocationType,
-    pub name: String,
-    pub parts: Vec<ScenePart>,
-}
-
-pub type Scene = Vec<Location>;
-
-pub fn extract_scenes(script_parts: &Vec<ScriptPart>) -> Vec<Scene> {
+fn extract_scenes(script_parts: &Vec<ScriptPart>) -> Vec<Scene> {
     let mut scenes = Vec::new();
 
     // scene with default (empty) location
