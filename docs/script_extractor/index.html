@@ -45,8 +45,9 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-0' class='srclink' href='../src/script_extractor/main.rs.html#1-20' title='goto source code'>[src]</a></span></h1>
-<h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
+        </span><a id='src-0' class='srclink' href='../src/script_extractor/lib.rs.html#1-151' title='goto source code'>[src]</a></span></h1>
+<div class='docblock'><p>Library to parse movie scripts and output them in a structured format</p>
+</div><h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
 <table>
                     <tr class=' module-item'>
                         <td><a class='mod' href='parse/index.html'
@@ -62,6 +63,82 @@
                                title='script_extractor::serialize'>serialize</a></td>
                         <td class='docblock short'>
                              <p>Serialize <code>Script</code>s into different formats</p>
+
+                        </td>
+                    </tr>
+                </table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
+<table>
+                    <tr class=' module-item'>
+                        <td><a class='struct' href='struct.Location.html'
+                               title='script_extractor::Location'>Location</a></td>
+                        <td class='docblock short'>
+                             <p>Represents a location in which part of a <code>Scene</code> takes place.</p>
+
+                        </td>
+                    </tr>
+                </table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
+<table>
+                    <tr class=' module-item'>
+                        <td><a class='enum' href='enum.DialogPart.html'
+                               title='script_extractor::DialogPart'>DialogPart</a></td>
+                        <td class='docblock short'>
+                             <p>The different parts of a <code>Dialog</code>.</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='enum' href='enum.LocationType.html'
+                               title='script_extractor::LocationType'>LocationType</a></td>
+                        <td class='docblock short'>
+                             <p>Represents the types of locations often used in scripts.</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='enum' href='enum.ScenePart.html'
+                               title='script_extractor::ScenePart'>ScenePart</a></td>
+                        <td class='docblock short'>
+                             <p>A <code>Scene</code> consists of <code>Direction</code>s and <code>Dialog</code>s.</p>
+
+                        </td>
+                    </tr>
+                </table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
+<table>
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.extract_range.html'
+                               title='script_extractor::extract_range'>extract_range</a></td>
+                        <td class='docblock short'>
+                             <p>Parses the given string into a range.</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='fn' href='fn.filter_script.html'
+                               title='script_extractor::filter_script'>filter_script</a></td>
+                        <td class='docblock short'>
+                             <p>Filter the script using a range of pages.</p>
+
+                        </td>
+                    </tr>
+                </table><h2 id='types' class='section-header'><a href="#types">Type Definitions</a></h2>
+<table>
+                    <tr class=' module-item'>
+                        <td><a class='type' href='type.Scene.html'
+                               title='script_extractor::Scene'>Scene</a></td>
+                        <td class='docblock short'>
+                             <p>A <code>Scene</code> consists of a list of <code>Location</code>s.</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='type' href='type.Script.html'
+                               title='script_extractor::Script'>Script</a></td>
+                        <td class='docblock short'>
+                             <p>A <code>Script</code> consists of a list of <code>Scene</code>s.</p>
 
                         </td>
                     </tr>

@@ -45,14 +45,13 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-2083' class='srclink' href='../../../src/script_extractor/serialize/xml.rs.html#27-59' title='goto source code'>[src]</a></span></h1>
-<pre class='rust fn'>pub fn format_script&lt;W: <a class='trait' href='https://doc.rust-lang.org/nightly/std/io/trait.Write.html' title='std::io::Write'>Write</a>&gt;(scenes: &amp;<a class='type' href='../../../script_extractor/parse/type.Script.html' title='script_extractor::parse::Script'>Script</a>, output: &amp;mut W) -&gt; XmlResult&lt;<a href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>()</a>&gt;</pre><div class='docblock'><p>Serialize the given <code>Script</code> into a <code>xml</code></p>
+        </span><a id='src-176' class='srclink' href='../../../src/script_extractor/serialize/xml.rs.html#27-59' title='goto source code'>[src]</a></span></h1>
+<pre class='rust fn'>pub fn format_script&lt;W: <a class='trait' href='https://doc.rust-lang.org/nightly/std/io/trait.Write.html' title='std::io::Write'>Write</a>&gt;(scenes: &amp;<a class='type' href='../../../script_extractor/type.Script.html' title='script_extractor::Script'>Script</a>, output: &amp;mut W) -&gt; XmlResult&lt;<a href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>()</a>&gt;</pre><div class='docblock'><p>Serialize the given <code>Script</code> into a <code>xml</code></p>
 
 <p>Serialize the given <code>Script</code> into the following <code>xml</code> format and write
 it to the given <code>Writer</code>.</p>
 
-<h1 id="example" class='section-header'><a
-                           href="#example">Example</a></h1>
+<h1 id='example' class='section-header'><a href='#example'>Example</a></h1>
 <pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
 &lt;script&gt;
   &lt;scene&gt;

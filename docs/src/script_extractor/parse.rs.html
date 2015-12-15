@@ -371,170 +371,17 @@
 <span id="329">329</span>
 <span id="330">330</span>
 <span id="331">331</span>
-<span id="332">332</span>
-<span id="333">333</span>
-<span id="334">334</span>
-<span id="335">335</span>
-<span id="336">336</span>
-<span id="337">337</span>
-<span id="338">338</span>
-<span id="339">339</span>
-<span id="340">340</span>
-<span id="341">341</span>
-<span id="342">342</span>
-<span id="343">343</span>
-<span id="344">344</span>
-<span id="345">345</span>
-<span id="346">346</span>
-<span id="347">347</span>
-<span id="348">348</span>
-<span id="349">349</span>
-<span id="350">350</span>
-<span id="351">351</span>
-<span id="352">352</span>
-<span id="353">353</span>
-<span id="354">354</span>
-<span id="355">355</span>
-<span id="356">356</span>
-<span id="357">357</span>
-<span id="358">358</span>
-<span id="359">359</span>
-<span id="360">360</span>
-<span id="361">361</span>
-<span id="362">362</span>
-<span id="363">363</span>
-<span id="364">364</span>
-<span id="365">365</span>
-<span id="366">366</span>
-<span id="367">367</span>
-<span id="368">368</span>
-<span id="369">369</span>
-<span id="370">370</span>
-<span id="371">371</span>
-<span id="372">372</span>
-<span id="373">373</span>
-<span id="374">374</span>
-<span id="375">375</span>
-<span id="376">376</span>
-<span id="377">377</span>
-<span id="378">378</span>
-<span id="379">379</span>
-<span id="380">380</span>
-<span id="381">381</span>
-<span id="382">382</span>
-<span id="383">383</span>
-<span id="384">384</span>
-<span id="385">385</span>
-<span id="386">386</span>
-<span id="387">387</span>
-<span id="388">388</span>
-<span id="389">389</span>
-<span id="390">390</span>
-<span id="391">391</span>
-<span id="392">392</span>
-<span id="393">393</span>
-<span id="394">394</span>
-<span id="395">395</span>
-<span id="396">396</span>
-<span id="397">397</span>
-<span id="398">398</span>
-<span id="399">399</span>
-<span id="400">400</span>
-<span id="401">401</span>
-<span id="402">402</span>
-<span id="403">403</span>
-<span id="404">404</span>
-<span id="405">405</span>
-<span id="406">406</span>
-<span id="407">407</span>
 </pre><pre class='rust '>
 <span class='doccomment'>//! Parsing scripts into `Script`s.</span>
 <span class='doccomment'>//!</span>
 <span class='doccomment'>//! This module provides functions to parse scripts which have been extracted</span>
 <span class='doccomment'>//! from pdfs into `Script`s.</span>
 
-<span class='doccomment'>/// A `Script` consists of a list of `Scene`s.</span>
-<span class='kw'>pub</span> <span class='kw'>type</span> <span class='ident'>Script</span> <span class='op'>=</span> <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>Scene</span><span class='op'>&gt;</span>;
-
-<span class='doccomment'>/// A `Scene` consists of a list of `Location`s.</span>
-<span class='doccomment'>///</span>
-<span class='doccomment'>/// Some scripts do not distinguish between scenes and locations and will</span>
-<span class='doccomment'>/// thus only have one `Scene` with several `Location`s or several `Scene`s</span>
-<span class='doccomment'>/// with each containing only one `Location`.</span>
-<span class='kw'>pub</span> <span class='kw'>type</span> <span class='ident'>Scene</span> <span class='op'>=</span> <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>Location</span><span class='op'>&gt;</span>;
-
-<span class='doccomment'>/// Represents a location in which part of a `Scene` takes place.</span>
-<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Default</span>, <span class='ident'>Clone</span>, <span class='ident'>Debug</span>)]</span>
-<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>Location</span> {
-    <span class='doccomment'>/// The kind of the location (like internal)</span>
-    <span class='kw'>pub</span> <span class='ident'>kind</span>: <span class='ident'>LocationType</span>,
-    <span class='doccomment'>/// The name of the location</span>
-    <span class='kw'>pub</span> <span class='ident'>name</span>: <span class='ident'>String</span>,
-    <span class='doccomment'>/// The `Dialog` and `Direction` which take place in this location</span>
-    <span class='kw'>pub</span> <span class='ident'>parts</span>: <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>ScenePart</span><span class='op'>&gt;</span>,
-}
-
-<span class='doccomment'>/// Represents the types of locations often used in scripts.</span>
-<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Clone</span>, <span class='ident'>Debug</span>)]</span>
-<span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>LocationType</span> {
-    <span class='ident'>Undefined</span>,
-    <span class='ident'>Internal</span>,
-    <span class='ident'>External</span>,
-    <span class='ident'>InternalExternal</span>,
-}
-
-<span class='doccomment'>/// A `Scene` consists of `Direction`s and `Dialog`s.</span>
-<span class='doccomment'>///</span>
-<span class='doccomment'>/// Each `ScenePart` carries the page number from which it was extracted</span>
-<span class='doccomment'>/// originally.</span>
-<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>, <span class='ident'>Clone</span>)]</span>
-<span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>ScenePart</span> {
-    <span class='ident'>Direction</span> {
-        <span class='ident'>direction</span>: <span class='ident'>String</span>,
-        <span class='ident'>page</span>: <span class='ident'>u32</span>,
-    },
-    <span class='ident'>Dialog</span> {
-        <span class='ident'>speaker</span>: <span class='ident'>String</span>,
-        <span class='ident'>dialog</span>: <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>DialogPart</span><span class='op'>&gt;</span>,
-        <span class='ident'>page</span>: <span class='ident'>u32</span>,
-    }
-}
-
-<span class='doccomment'>/// The different parts of a `Dialog`.</span>
-<span class='doccomment'>///</span>
-<span class='doccomment'>/// A `DialogPart` can have inline `Direction`s in between normal `Dialog`.</span>
-<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>, <span class='ident'>Clone</span>)]</span>
-<span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>DialogPart</span> {
-    <span class='doccomment'>/// What a speaker says</span>
-    <span class='ident'>Dialog</span>(<span class='ident'>String</span>),
-    <span class='doccomment'>/// How or to whom the speaker says it</span>
-    <span class='ident'>Direction</span>(<span class='ident'>String</span>),
-}
-
-<span class='doccomment'>/// The default for `LocationType` is `Undefined`.</span>
-<span class='kw'>impl</span> <span class='ident'>Default</span> <span class='kw'>for</span> <span class='ident'>LocationType</span> {
-    <span class='kw'>fn</span> <span class='ident'>default</span>() <span class='op'>-&gt;</span> <span class='ident'>LocationType</span> { <span class='ident'>LocationType</span>::<span class='ident'>Undefined</span> }
-}
-
-<span class='doccomment'>/// Converts the `LocationType` into a string representation.</span>
-<span class='doccomment'>///</span>
-<span class='doccomment'>/// `Undefined` becomes the empty string.</span>
-<span class='kw'>impl</span> <span class='ident'>Into</span><span class='op'>&lt;</span><span class='kw-2'>&amp;</span><span class='lifetime'>&#39;static</span> <span class='ident'>str</span><span class='op'>&gt;</span> <span class='kw'>for</span> <span class='ident'>LocationType</span> {
-    <span class='kw'>fn</span> <span class='ident'>into</span>(<span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;static</span> <span class='ident'>str</span> {
-        <span class='kw'>match</span> <span class='self'>self</span> {
-            <span class='ident'>LocationType</span>::<span class='ident'>Undefined</span> <span class='op'>=&gt;</span> <span class='string'>&quot;&quot;</span>,
-            <span class='ident'>LocationType</span>::<span class='ident'>Internal</span> <span class='op'>=&gt;</span> <span class='string'>&quot;internal&quot;</span>,
-            <span class='ident'>LocationType</span>::<span class='ident'>External</span> <span class='op'>=&gt;</span> <span class='string'>&quot;external&quot;</span>,
-            <span class='ident'>LocationType</span>::<span class='ident'>InternalExternal</span> <span class='op'>=&gt;</span> <span class='string'>&quot;internal,external&quot;</span>,
-        }
-    }
-}
-
 <span class='doccomment'>/// Parses the given script into a `Script`.</span>
 <span class='doccomment'>///</span>
 <span class='doccomment'>/// Reads the parsed pdf of a script in the poppler xml-format</span>
 <span class='doccomment'>/// (`pdftohtml --xml`) from `reader` and parses it into a `Script`.</span>
-<span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>parse_script</span>(<span class='ident'>reader</span>: <span class='ident'>Box</span><span class='op'>&lt;</span><span class='ident'>Read</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='ident'>Script</span> {
+<span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>parse_script</span>(<span class='ident'>reader</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>Read</span>) <span class='op'>-&gt;</span> <span class='ident'>Script</span> {
     <span class='kw'>let</span> (<span class='ident'>properties</span>, <span class='ident'>lines</span>) <span class='op'>=</span> <span class='ident'>read_and_analyze_script</span>(<span class='ident'>reader</span>);
 
     <span class='kw'>let</span> <span class='ident'>parts</span> <span class='op'>=</span> <span class='ident'>extract_script_parts</span>(<span class='ident'>properties</span>, <span class='kw-2'>&amp;</span><span class='ident'>lines</span>);
@@ -543,6 +390,7 @@
 }
 
 
+<span class='kw'>use</span> ::{<span class='ident'>DialogPart</span>, <span class='ident'>Location</span>, <span class='ident'>LocationType</span>, <span class='ident'>Scene</span>, <span class='ident'>ScenePart</span>, <span class='ident'>Script</span>};
 <span class='kw'>use</span> <span class='ident'>regex</span>::<span class='ident'>Regex</span>;
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>collections</span>::<span class='ident'>HashMap</span>;
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>io</span>::<span class='ident'>Read</span>;
@@ -582,7 +430,7 @@
     <span class='ident'>intra_paragraph_line_height</span>: <span class='ident'>i32</span>,
 }
 
-<span class='kw'>fn</span> <span class='ident'>read_and_analyze_script</span>(<span class='ident'>reader</span>: <span class='ident'>Box</span><span class='op'>&lt;</span><span class='ident'>Read</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> (<span class='ident'>ScriptProperties</span>, <span class='ident'>Vec</span><span class='op'>&lt;</span>(<span class='ident'>LineAttributes</span>, <span class='ident'>String</span>)<span class='op'>&gt;</span>) {
+<span class='kw'>fn</span> <span class='ident'>read_and_analyze_script</span>(<span class='ident'>reader</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>Read</span>) <span class='op'>-&gt;</span> (<span class='ident'>ScriptProperties</span>, <span class='ident'>Vec</span><span class='op'>&lt;</span>(<span class='ident'>LineAttributes</span>, <span class='ident'>String</span>)<span class='op'>&gt;</span>) {
     <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>script_properties</span>: <span class='ident'>ScriptProperties</span> <span class='op'>=</span> <span class='ident'>Default</span>::<span class='ident'>default</span>();
     <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>lines</span>: <span class='ident'>Vec</span><span class='op'>&lt;</span>(<span class='ident'>LineAttributes</span>, <span class='ident'>String</span>)<span class='op'>&gt;</span> <span class='op'>=</span> <span class='ident'>Vec</span>::<span class='ident'>new</span>();
 
