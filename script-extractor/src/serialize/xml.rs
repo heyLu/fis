@@ -59,7 +59,7 @@ pub fn format_script<W: Write>(scenes: &Script, output: &mut W) -> XmlResult<()>
 }
 
 
-use parse::{DialogPart, LocationType, ScenePart, Script};
+use ::{DialogPart, LocationType, ScenePart, Script};
 use std::io::Write;
 use xml::{EventWriter, EmitterConfig};
 use xml::writer::Result as XmlResult;

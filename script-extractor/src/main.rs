@@ -1,16 +1,12 @@
 #[macro_use]
 extern crate clap;
-extern crate regex;
-extern crate xml;
-
-pub mod parse;
-pub mod serialize;
 
 use clap::{App, Arg};
-use parse::Script;
-use regex::Regex;
 use std::fs::File;
 use std::io::{BufReader, Read};
+
+extern crate script_extractor;
+use script_extractor::*;
 
 fn main() {
     let args = App::new("script-extractor")
@@ -70,72 +66,4 @@ fn check_file_exists(file_name: String) -> Result<(), String> {
     } else {
         Err(format!("File '{}' not found", file_name))
     }
-}
-
-/// Parses the given string into a range.
-///
-/// This is used when parsing the "--pages" cli argument.
-///
-/// # Examples
-///
-/// ```
-/// assert_eq!(extract_range("42"), (42, 42));
-/// assert_eq!(extract_range("3-15"), (3, 15));
-/// assert_eq!(extract_range("foo"), (0, u32::max_value()));
-/// ```
-pub fn extract_range(range_string: &str) -> Option<(u32, u32)> {
-    let range_regex = Regex::new(r"^(?P<lower>\d+)-(?P<upper>\d+)$").unwrap();
-
-    if let Ok(page) = range_string.parse() {
-        return Some((page, page));
-    } else if let Some(captures) = range_regex.captures(range_string) {
-        if let (Ok(lower), Ok(upper)) = (captures.name("lower").unwrap().parse(),
-                                         captures.name("upper").unwrap().parse()) {
-            return Some((lower, upper));
-        }
-    }
-
-    None
-}
-
-/// Filter the script using a range of pages.
-///
-/// The range is inclusive and empty scenes and locations are removed.
-pub fn filter_script(script: Script, page_range: (u32, u32)) -> Script {
-    use parse::{Scene, ScenePart};
-
-    let (lower, upper) = page_range;
-
-    script.into_iter().filter_map(|scene| {
-        let filtered_scene: Scene = scene.into_iter().filter_map(|mut location| {
-            let filtered_scene_parts: Vec<ScenePart> = location.parts.into_iter().filter_map(|scene_part| {
-                let page = match scene_part {
-                    ScenePart::Direction { page, .. } => page,
-                    ScenePart::Dialog { page, .. } => page
-                };
-
-                // filter using the given range
-                if lower <= page && page <= upper {
-                    Some(scene_part)
-                } else {
-                    None
-                }
-            }).collect();
-
-            // filter out locations with no scene parts
-            if filtered_scene_parts.len() > 0 {
-                location.parts = filtered_scene_parts;
-                Some(location)
-            } else {
-                None
-            }
-        }).collect();
-
-        // filter out scenes with no locations
-        if filtered_scene.len() > 0 {
-            Some(filtered_scene)
-        } else {
-            None
-        }
-    }).collect()
 }

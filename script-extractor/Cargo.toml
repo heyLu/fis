@@ -3,6 +3,10 @@ name = "script-extractor"
 version = "0.1.0"
 authors = ["Klemens Schölhorn <klemens@schoelhorn.eu>"]
 
+[[bin]]
+name = "script-extractor"
+doc = false
+
 [dependencies]
 xml-rs = "0.2"
 regex = "0.1.41"
