@@ -9,5 +9,5 @@ doc = false
 
 [dependencies]
 xml-rs = "0.2"
-regex = "0.1.41"
+regex = "0.1"
 clap = "1"
