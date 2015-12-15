@@ -90,9 +90,10 @@ impl Into<&'static str> for LocationType {
 /// # Examples
 ///
 /// ```
-/// assert_eq!(extract_range("42"), (42, 42));
-/// assert_eq!(extract_range("3-15"), (3, 15));
-/// assert_eq!(extract_range("foo"), (0, u32::max_value()));
+/// # use script_extractor::extract_range;
+/// assert_eq!(extract_range("42"), Some((42, 42)));
+/// assert_eq!(extract_range("3-15"), Some((3, 15)));
+/// assert_eq!(extract_range("foo"), None);
 /// ```
 pub fn extract_range(range_string: &str) -> Option<(u32, u32)> {
     let range_regex = regex::Regex::new(r"^(?P<lower>\d+)-(?P<upper>\d+)$").unwrap();
