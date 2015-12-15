@@ -84,7 +84,7 @@ impl Into<&'static str> for LocationType {
 ///
 /// Reads the parsed pdf of a script in the poppler xml-format
 /// (`pdftohtml --xml`) from `reader` and parses it into a `Script`.
-pub fn parse_script(reader: Box<Read>) -> Script {
+pub fn parse_script(reader: &mut Read) -> Script {
     let (properties, lines) = read_and_analyze_script(reader);
 
     let parts = extract_script_parts(properties, &lines);
@@ -132,7 +132,7 @@ struct ScriptProperties {
     intra_paragraph_line_height: i32,
 }
 
-fn read_and_analyze_script(reader: Box<Read>) -> (ScriptProperties, Vec<(LineAttributes, String)>) {
+fn read_and_analyze_script(reader: &mut Read) -> (ScriptProperties, Vec<(LineAttributes, String)>) {
     let mut script_properties: ScriptProperties = Default::default();
     let mut lines: Vec<(LineAttributes, String)> = Vec::new();
 

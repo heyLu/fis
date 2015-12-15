@@ -20,14 +20,14 @@ fn main() {
                             .validator(check_file_exists))
                    .get_matches();
 
-    let input: Box<Read> = if let Some(input_file) = args.value_of("input-file") {
+    let mut input: Box<Read> = if let Some(input_file) = args.value_of("input-file") {
         let file_reader = File::open(input_file).expect("Cannot open input-file");
         Box::new(BufReader::new(file_reader))
     } else {
         Box::new(BufReader::new(std::io::stdin()))
     };
 
-    let scenes = parse::parse_script(input);
+    let scenes = parse::parse_script(&mut input);
 
     serialize::xml::format_script(&scenes, &mut std::io::stdout()).unwrap();
 }
