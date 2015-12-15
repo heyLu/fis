@@ -8,7 +8,7 @@ pub mod serialize;
 
 use clap::{App, Arg};
 use std::fs::File;
-use std::io::BufReader;
+use std::io::{BufReader, Read};
 
 fn main() {
     let args = App::new("script-extractor")
@@ -17,16 +17,17 @@ fn main() {
                    .arg(Arg::with_name("input-file")
                             .help("xml extracted using 'pdftohtml -xml script.pdf'")
                             .index(1)
-                            .required(true)
                             .validator(check_file_exists))
                    .get_matches();
 
-    let input_file = args.value_of("input-file").unwrap();
+    let input: Box<Read> = if let Some(input_file) = args.value_of("input-file") {
+        let file_reader = File::open(input_file).expect("Cannot open input-file");
+        Box::new(BufReader::new(file_reader))
+    } else {
+        Box::new(BufReader::new(std::io::stdin()))
+    };
 
-    let file_reader = File::open(input_file).expect("Cannot open file");
-    let buffered_file_reader = Box::new(BufReader::new(file_reader));
-
-    let scenes = parse::parse_script(buffered_file_reader);
+    let scenes = parse::parse_script(input);
 
     serialize::xml::format_script(&scenes, &mut std::io::stdout()).unwrap();
 }
