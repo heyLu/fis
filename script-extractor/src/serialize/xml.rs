@@ -18,7 +18,10 @@
 ///       <dialog character="Shaman" page="1">You’re lucky to be alive. (...)</dialog>
 ///       <direction page="2">Finally she collapses into the snow, her eyes shut tight.</direction>
 ///       <direction page="2">BLACK</direction>
-///       <dialog character="Shaman" mode="VO" page="2">Here, take a sip.</dialog>
+///       <dialog character="Shaman" mode="VO" page="2">
+///           <direction>(To Sintel)</direction>
+///           Here, take a sip.
+///       </dialog>
 ///     </location>
 ///   </scene>
 ///   <!-- (...) -->
