@@ -1,7 +1,7 @@
 #[macro_use]
 extern crate clap;
 
-use clap::{App, Arg};
+use clap::{App, Arg, ArgGroup};
 use std::fs::File;
 use std::io::{BufReader, Read};
 
@@ -19,6 +19,15 @@ fn main() {
                             .help("input file in poppler's xml format")
                             .index(1)
                             .validator(check_file_exists))
+                   .arg(Arg::with_name("xml")
+                            .long("xml")
+                            .help("Output script in xml format"))
+                   .arg(Arg::with_name("json")
+                            .long("json")
+                            .help("Output script in json format"))
+                   .arg_group(ArgGroup::with_name("output-format")
+                                       .add_all(&["xml", "json"])
+                                       .required(true))
                    .arg(Arg::with_name("pages")
                             .help("Specify a single page or range of pages to extract")
                             .short("p")
@@ -50,7 +59,11 @@ fn main() {
         script = filter_script(script, range);
     }
 
-    serialize::xml::format_script(&script, &mut std::io::stdout()).unwrap();
+    if args.is_present("xml") {
+        serialize::xml::format_script(&script, &mut std::io::stdout()).unwrap();
+    } else if args.is_present("json") {
+        serialize::json::format_script(&script, &mut std::io::stdout()).unwrap();
+    }
 }
 
 /// Check if the given file exists. Also considers "-" as a valid file.
