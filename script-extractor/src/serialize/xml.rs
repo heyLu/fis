@@ -35,12 +35,12 @@ pub fn format_script<W: Write>(scenes: &Script, output: &mut W) -> XmlResult<()>
         for location in scene.iter() {
             let mut location_event = XmlEvent::start_element("location");
             if location.name.len() > 0 {
-                location_event = location_event.attr("name", &location.name);
+                location_event = location_event.attr("place", &location.name);
             }
             match location.kind {
                 LocationType::Undefined => {}
                 ref kind => {
-                    location_event = location_event.attr("kind", kind.clone().into());
+                    location_event = location_event.attr("type", kind.clone().into());
                 }
             }
             try!(writer.write(location_event));
@@ -78,7 +78,7 @@ fn format_scene_parts<W: Write>(scene_parts: &Vec<ScenePart>, writer: &mut Event
             }
             &ScenePart::Dialog { ref speaker, ref dialog, ref page } => {
                 try!(writer.write(XmlEvent::start_element("dialog")
-                                           .attr("speaker", speaker)
+                                           .attr("character", speaker)
                                            .attr("page", page.to_string().as_ref())));
 
                 for (i, dialog_part) in dialog.iter().enumerate() {
