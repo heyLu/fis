@@ -7,7 +7,7 @@
     <meta name="description" content="API documentation for the Rust `format_script` fn in crate `script_extractor`.">
     <meta name="keywords" content="rust, rustlang, rust-lang, format_script">
 
-    <title>script_extractor::serialize::xml::format_script - Rust</title>
+    <title>script_extractor::serialize::json::format_script - Rust</title>
 
     <link rel="stylesheet" type="text/css" href="../../../main.css">
 
@@ -26,7 +26,7 @@
 
     <nav class="sidebar">
         
-        <p class='location'><a href='../../index.html'>script_extractor</a>::<wbr><a href='../index.html'>serialize</a>::<wbr><a href='index.html'>xml</a></p><script>window.sidebarCurrent = {name: 'format_script', ty: 'fn', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+        <p class='location'><a href='../../index.html'>script_extractor</a>::<wbr><a href='../index.html'>serialize</a>::<wbr><a href='index.html'>json</a></p><script>window.sidebarCurrent = {name: 'format_script', ty: 'fn', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </nav>
 
     <nav class="sub">
@@ -41,35 +41,52 @@
     </nav>
 
     <section id='main' class="content fn">
-<h1 class='fqn'><span class='in-band'>Function <a href='../../index.html'>script_extractor</a>::<wbr><a href='../index.html'>serialize</a>::<wbr><a href='index.html'>xml</a>::<wbr><a class='fn' href=''>format_script</a></span><span class='out-of-band'><span id='render-detail'>
+<h1 class='fqn'><span class='in-band'>Function <a href='../../index.html'>script_extractor</a>::<wbr><a href='../index.html'>serialize</a>::<wbr><a href='index.html'>json</a>::<wbr><a class='fn' href=''>format_script</a></span><span class='out-of-band'><span id='render-detail'>
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-283' class='srclink' href='../../../src/script_extractor/serialize/xml.rs.html#30-62' title='goto source code'>[src]</a></span></h1>
-<pre class='rust fn'>pub fn format_script&lt;W: <a class='trait' href='https://doc.rust-lang.org/nightly/std/io/trait.Write.html' title='std::io::Write'>Write</a>&gt;(scenes: &amp;<a class='type' href='../../../script_extractor/type.Script.html' title='script_extractor::Script'>Script</a>, output: &amp;mut W) -&gt; XmlResult&lt;<a href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>()</a>&gt;</pre><div class='docblock'><p>Serialize the given <code>Script</code> into a <code>xml</code></p>
+        </span><a id='src-177' class='srclink' href='../../../src/script_extractor/serialize/json.rs.html#47-54' title='goto source code'>[src]</a></span></h1>
+<pre class='rust fn'>pub fn format_script&lt;W: <a class='trait' href='https://doc.rust-lang.org/nightly/std/io/trait.Write.html' title='std::io::Write'>Write</a>&gt;(scenes: &amp;<a class='type' href='../../../script_extractor/type.Script.html' title='script_extractor::Script'>Script</a>, output: &amp;mut W) -&gt; <a class='type' href='http://doc.rust-lang.org/rustc-serialize/rustc_serialize/json/type.EncodeResult.html' title='rustc_serialize::json::EncodeResult'>EncodeResult</a>&lt;<a href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>()</a>&gt;</pre><div class='docblock'><p>Serialize the given <code>Script</code> into a <code>json</code></p>
 
-<p>Serialize the given <code>Script</code> into the following <code>xml</code> format and write
+<p>Serialize the given <code>Script</code> into the following <code>json</code> format and write
 it to the given <code>Writer</code>.</p>
 
 <h1 id='example' class='section-header'><a href='#example'>Example</a></h1>
-<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;script&gt;
-  &lt;scene&gt;
-    &lt;location place=&quot;Snowy Landscape&quot; type=&quot;external&quot;&gt;
-      &lt;direction page=&quot;1&quot;&gt;Swirls of snow obscure the rocky formations of a mountain (...)&lt;/direction&gt;
-      &lt;direction page=&quot;1&quot;&gt;Five ragged men attack a young girl, SINTEL, (...)&lt;/direction&gt;
-      &lt;!-- (...) --&gt;
-      &lt;dialog character=&quot;Shaman&quot; page=&quot;1&quot;&gt;You’re lucky to be alive. (...)&lt;/dialog&gt;
-      &lt;direction page=&quot;2&quot;&gt;Finally she collapses into the snow, her eyes shut tight.&lt;/direction&gt;
-      &lt;direction page=&quot;2&quot;&gt;BLACK&lt;/direction&gt;
-      &lt;dialog character=&quot;Shaman&quot; mode=&quot;VO&quot; page=&quot;2&quot;&gt;
-          &lt;direction&gt;(To Sintel)&lt;/direction&gt;
-          Here, take a sip.
-      &lt;/dialog&gt;
-    &lt;/location&gt;
-  &lt;/scene&gt;
-  &lt;!-- (...) --&gt;
-&lt;/script&gt;
+<pre><code class="language-json">[
+    [
+        {
+            &quot;place&quot;: &quot;Snowy Landscape&quot;,
+            &quot;type&quot;: &quot;external&quot;,
+            &quot;parts&quot;: [{
+                &quot;page&quot;: 1,
+                &quot;direction&quot;: &quot;Swirls of snow obscure the rocky formations of a mountain (...)&quot;
+            },{
+                &quot;page&quot;: 1,
+                &quot;direction&quot;: &quot;Five ragged men attack a young girl, SINTEL, (...)&quot;
+            },{
+                &quot;page&quot;: 1,
+                &quot;character&quot;: &quot;Shaman&quot;,
+                &quot;dialog&quot;: [
+                    &quot;You’re lucky to be alive. (...)&quot;
+                ]
+            },{
+                &quot;page&quot;: 2,
+                &quot;direction&quot;: &quot;Finally she collapses into the snow, her eyes shut tight.&quot;
+            },{
+                &quot;page&quot;: 2,
+                &quot;direction&quot;: &quot;BLACK&quot;
+            },{
+                &quot;page&quot;: 2,
+                &quot;character&quot;: &quot;Shaman&quot;,
+                &quot;mode&quot;: &quot;VO&quot;,
+                &quot;dialog&quot;: [
+                    { &quot;direction&quot;: &quot;(To Sintel)&quot; },
+                    &quot;Here, take a sip.&quot;
+                ]
+            }]
+        }
+    ]
+]
 </code></pre>
 </div></section>
     <section id='search' class="content hidden"></section>

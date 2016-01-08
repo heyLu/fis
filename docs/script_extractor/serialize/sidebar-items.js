@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["xml","Serialize `Script`s to `xml`"]]});
+initSidebarItems({"mod":[["json","Serialize `Script`s to `json`"],["xml","Serialize `Script`s to `xml`"]]});

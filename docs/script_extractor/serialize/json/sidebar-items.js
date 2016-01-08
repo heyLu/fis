@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["format_script","Serialize the given `Script` into a `json`"]]});
