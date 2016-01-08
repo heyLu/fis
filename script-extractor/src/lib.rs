@@ -1,6 +1,7 @@
 //! Library to parse movie scripts and output them in a structured format
 
 extern crate regex;
+extern crate rustc_serialize;
 extern crate xml;
 
 pub mod parse;
