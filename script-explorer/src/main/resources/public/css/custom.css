@@ -1,4 +1,6 @@
 .table > tbody > tr > td.table-cast {
-	padding-top:32px;
+  padding-top: 32px;
 }
-
+.labelCustom {
+  margin-right:5px;
+}
