@@ -46,7 +46,7 @@ function draw_plot_chart(name, safe_name, prefix, tie_breaker, center_sort, coll
         return {
           name: c,
           id: x[c],
-          group: i++
+          group: 1 //i++
         }
       });
 

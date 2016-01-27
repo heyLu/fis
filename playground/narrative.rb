@@ -62,7 +62,7 @@ scenes = $script.xpath('/script/scene/location').map do |loc|
   end
   cs = Set.new(cs).to_a.sort
 
-  pos += scene[:duration]
+  pos += 1 #scene[:duration]
   if cs.size > 0
     scene[:chars] = cs
     scene
