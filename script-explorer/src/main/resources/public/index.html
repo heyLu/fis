@@ -61,16 +61,11 @@
           </li>
           <li class="active" ng-hide="navbar"><a href="#">Selected Movie: {{ movie }}</a>
           </li>
-          <li class="dropdown" ng-hide="navbar">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Lets's Start <span class="caret"></span></a>
-            <ul class="dropdown-menu">
-              <li ng-hide="navbarMovieDescription"><a href="#" ng-click="viewMovieData()">Movie Information</a>
-              </li>
-              <li ng-hide="navbarScript"><a href="#" ng-click="viewTimeline()">Movie Timeline</a>
-              </li>
-              <li ng-hide="navbarScript"><a href="#" ng-click="viewFlowchart()">Movie Flow Graph</a>
-              </li>
-            </ul>
+          <li class="" ng-hide="navbarScript"><a href="#" ng-click="viewTimeline()">Movie Timeline</a>
+          </li>
+          <li class="" ng-hide="navbarMovieDescription"><a href="#" ng-click="viewMovieData()">Movie Information</a>
+          </li>
+          <li class="" ng-hide="navbarFlowChart"><a href="#" ng-click="viewFlowchart()">Movie Flow Graph</a>
           </li>
         </ul>
       </div>

@@ -11,14 +11,15 @@ $ mvn package
 $ java -jar target/wcm-prak-standalone.jar
 ```
 
-Deploy movie scripts in "src/main/resources/public/res" as json file (use script-extractor for that)
+Parameter Options:
 ```
-The names of the json files in that folder have to match one of the entries in movieNames.json file ("src/main/resources/public/res"). 
-For example like "Avatar (2009).json", "The Social Network (2010)" or "Toy Story 3 (2010).json".
+-m (alias: --movieDir) Path to folder contains parsed pdf script in json format.
+-f (alias: --flowChartDir) Path to folder contains parsed pdf in flow graph format.
+-a (alias: --apiKey) The API Key to access tmdb via api.
+```
+
+```
+Attention: The json files have to match one of the entries in
+movieNames.json file ("src/main/resources/public/res").
 ```
 Use your browser to open http://localhost:4567/.
-
-## Development
-
-If you want to use the TheMovieDB API, you have to manually add
-an API-key to the source of RestAPI.java for now.

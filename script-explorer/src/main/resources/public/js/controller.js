@@ -25,10 +25,11 @@ app.controller('movieCtrl', function($scope, $http, $sce, $compile, $rootScope) 
   $scope.intro = false;
   $scope.navbar = true;
   $scope.navbarMovieDescription = true;
+  $scope.navbarFlowChart = true;
   $scope.navbarScript = true;
   $scope.timeline = true;
-  $scope.movieDescription = true;
   $scope.flowchart = true;
+  $scope.movieDescription = true;
   $scope.warning = true;
   $scope.movie = "";
   $scope.movieID = 19995;
@@ -116,10 +117,13 @@ app.controller('movieCtrl', function($scope, $http, $sce, $compile, $rootScope) 
         }
         if( $scope.movieScript === false){
           $scope.navbarScript = true;
+          $scope.navbarFlowChart = true;
           if( $scope.movieID == 0) {
             // return to home because no data available
             $scope.intro = false;
             $scope.navbar = true;
+            $scope.navbarScript = true;
+            $scope.navbarFlowChart = true;
             $scope.timeline = true;
             $scope.flowchart = true;
             $scope.movieDescription = true;
@@ -130,6 +134,7 @@ app.controller('movieCtrl', function($scope, $http, $sce, $compile, $rootScope) 
           }
         } else {
           $scope.navbarScript = false;
+          $scope.navbarFlowChart = false;
         }
       }
     }
@@ -152,7 +157,11 @@ app.controller('movieCtrl', function($scope, $http, $sce, $compile, $rootScope) 
   };
 
   $scope.viewFlowchart = function() {
-    // to do (implement)
+    $scope.intro = true;
+    $scope.navbar = false;
+    $scope.timeline = true;
+    $scope.movieDescription = true;
+    $scope.flowchart = false;
   };
 
   // Reset all visible parts and show home page
@@ -167,6 +176,7 @@ app.controller('movieCtrl', function($scope, $http, $sce, $compile, $rootScope) 
     $scope.flowchart = true;
     $scope.navbarMovieDescription = true;
     $scope.navbarScript = true;
+    $scope.navbarFlowChart = true;
     $scope.warning = true;
   };
 
@@ -463,6 +473,10 @@ app.controller('movieCtrl', function($scope, $http, $sce, $compile, $rootScope) 
     }, function errorCallback(response) {
       // called asynchronously if an error occurs
       // or server returns response with an error status.
+      // error while try to fetch movie information data from tmdb (disable function)
+      console.log("Was in Error log");
+      $scope.loadMovieScript( $scope.movie, [] );
+      $scope.navbarMovieDescription = true;
     });
   };
 
@@ -470,10 +484,11 @@ app.controller('movieCtrl', function($scope, $http, $sce, $compile, $rootScope) 
     $http({
       method: 'GET',
       dataType: "json",
-      url: 'http://localhost:4567/res/' + encodeURIComponent(movieName) + '.json'
+      url: 'http://localhost:4567/api/movie/json/' + encodeURIComponent(movieName + '.json')
     }).then(function successCallback(response) {
       // make timeline in navbar available
       $scope.navbarScript = false;
+      $scope.navbarFlowChart = false;
       $scope.movieScript = [];
       // create timeline
       $scope.createTimeline(response.data, acterList);
@@ -481,11 +496,14 @@ app.controller('movieCtrl', function($scope, $http, $sce, $compile, $rootScope) 
       // if no script was found
       // disable timeline in navbar
       $scope.navbarScript = true;
+      $scope.navbarFlowChart = true;
       $scope.movieScript = false;
       // diasbale wait bar
       $rootScope.waitForTimeline = true;
       // if no data is available return to home
       if( $scope.movieID  == 0 ) {
+        $scope.movie = "";
+        $("#movieName").val("");
         $scope.intro = false;
         $scope.navbar = true;
         $scope.timeline = true;
