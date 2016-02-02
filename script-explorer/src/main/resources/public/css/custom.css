@@ -4,3 +4,7 @@
 .labelCustom {
   margin-right:5px;
 }
+#chart svg {
+  width: 2000px;
+  height: 1000px;
+}

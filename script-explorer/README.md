@@ -14,7 +14,6 @@ $ java -jar target/wcm-prak-standalone.jar
 Parameter Options:
 ```
 -m (alias: --movieDir) Path to folder contains parsed pdf script in json format.
--f (alias: --flowChartDir) Path to folder contains parsed pdf in flow graph format.
 -a (alias: --apiKey) The API Key to access tmdb via api.
 ```
 

@@ -108,6 +108,7 @@ app.controller('movieCtrl', function($scope, $http, $sce, $compile, $rootScope) 
           $scope.loadMovieCredits( $scope.movieID  );
         }
         // load movie flow diagramms (to do)
+        var p = new PlotChart("#chart", "chart", $scope.movie);
       } else {
         // check which functions to display in navbar
         if( $scope.movieID == 0) {
