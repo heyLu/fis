@@ -325,3 +325,15 @@ function draw_plot_chart(name, safe_name, prefix, tie_breaker, center_sort, coll
     })(prefix.chars); // d3.xml (read chars)
   })(prefix.narrative); // d3.json (read scenes)
 }
+
+function draw_plot_chart2(title, safeName, url) {
+  get_json(url, function(script) {
+    var narrative = script_to_narrative(script);
+
+    draw_plot_chart(title, safeName,
+                    {name: url,
+                     narrative: narrative.narrative,
+                     chars: narrative.chars},
+                    true, false, false);
+  });
+}
