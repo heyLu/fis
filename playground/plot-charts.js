@@ -3,6 +3,8 @@
 function script_to_narrative(script, options) {
   var options = options || {};
   var too_many = options.too_many || 5;
+  var fixed_characters = options.fixed_characters || false;
+  var num_frequent = options.num_frequent || 5;
 
   var char_ids = {};
   var next_id = 0;
@@ -15,7 +17,7 @@ function script_to_narrative(script, options) {
   };
 
   var locations = get_locations(script);
-  var frequent = options.characters || most_frequent_characters(locations);
+  var frequent = options.characters || most_frequent_characters(locations, num_frequent);
 
   var pos = 0;
   var scenes = [];
@@ -27,7 +29,7 @@ function script_to_narrative(script, options) {
         .map(char_to_id).sort()
     };
 
-    if (scene.chars.length > too_many) {
+    if (fixed_characters || scene.chars.length > too_many) {
       scene.chars = scene.chars.filter(function(c) {
         return frequent.has(c);
       });
