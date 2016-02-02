@@ -13,8 +13,9 @@ function run_test() {
   });
 }
 
-function script_to_narrative(script, too_many) {
-  var too_many = too_many || 5;
+function script_to_narrative(script, options) {
+  var options = options || {};
+  var too_many = options.too_many || 5;
 
   var char_ids = {};
   var next_id = 0;
@@ -27,7 +28,7 @@ function script_to_narrative(script, too_many) {
   };
 
   var locations = get_locations(script);
-  var frequent = most_frequent_characters(locations);
+  var frequent = options.characters || most_frequent_characters(locations);
 
   var pos = 0;
   var scenes = [];
@@ -293,7 +294,7 @@ function PlotChart(selector, id, url, options) {
 
   get_json(url, function(script) {
     script = script;
-    narrative = script_to_narrative(script);
+    narrative = script_to_narrative(script, options);
 
     draw_plot_chart(selector, id, narrative, true, false, false);
   });
