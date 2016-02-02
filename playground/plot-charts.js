@@ -84,17 +84,6 @@ function is_dialog(part) {
   return part.dialog != null;
 }
 
-function with_characters(chars, locations) {
-  return locations.map(function(loc) {
-    return loc.parts
-      .filter(function(part) {
-        return part.dialog != null
-          && chars.has(normalize_name(part.character))
-      })
-  })
-    .filter(function(loc) { return loc.length != 0; });
-}
-
 function get_characters(loc) {
   return loc.parts
     .filter(function(part) {
@@ -107,10 +96,6 @@ function get_characters(loc) {
 
 function normalize_name(name) {
   return name.trim().split(/[^ \.\-A-Za-z]/)[0].trim().toUpperCase();
-}
-
-function is_dialog(part) {
-  return part.dialog != null;
 }
 
 function draw_plot_chart(name, safe_name, prefix, tie_breaker, center_sort, collapse) {
