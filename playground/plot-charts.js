@@ -292,8 +292,8 @@ function PlotChart(selector, id, url, options) {
   var script = null;
   var narrative = null;
 
-  get_json(url, function(script) {
-    script = script;
+  get_json(url, function(s) {
+    script = s;
     narrative = script_to_narrative(script, options);
 
     draw_plot_chart(selector, id, narrative, true, false, false);
@@ -303,7 +303,10 @@ function PlotChart(selector, id, url, options) {
     script: script,
     narrative: narrative,
     redraw: function(options) {
-      throw new Error("not implemented");
+      narrative = script_to_narrative(script, options);
+
+      document.querySelector("#chart svg").remove();
+      draw_plot_chart(selector, id, narrative, true, false, false);
     }
   }
 }
