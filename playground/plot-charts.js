@@ -286,3 +286,23 @@ function draw_plot_chart2(title, safeName, url) {
                     true, false, false);
   });
 }
+
+function PlotChart(selector, id, url, options) {
+  var script = null;
+  var narrative = null;
+
+  get_json(url, function(script) {
+    script = script;
+    narrative = script_to_narrative(script);
+
+    draw_plot_chart(selector, id, narrative, true, false, false);
+  });
+
+  return {
+    script: script,
+    narrative: narrative,
+    redraw: function(options) {
+      throw new Error("not implemented");
+    }
+  }
+}
