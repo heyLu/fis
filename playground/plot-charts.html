@@ -19,6 +19,15 @@
     <script src="plot-charts.js"></script>
     <script>
       var p = new PlotChart("#chart", "chart", "toy-story-3.json")
+
+      // only 10 most-frequent characters
+      //p.redraw({fixed_characters: true, num_frequent: 10});
+
+      // only specified characters
+      //p.redraw({fixed_characters: true, characters: new Set(["ANDY", "BUZZ", "MOM", "BONNIE"]);
+
+      // allow up to 10 characters per scene
+      //p.redraw({too_many: 10});
     </script>
 
     <p id="chart">
