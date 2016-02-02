@@ -1,13 +1,138 @@
 "use strict";
 
+function run_test() {
+  get_json("toy-story-3.json", function(script) {
+    window.script = script;
+    window.narrative = script_to_narrative(script);
+
+    draw_plot_chart("Toy Story 3", "toy-story-3",
+                    {name: "toy-story-3.xml",
+                     narrative: narrative.narrative,
+                     chars: narrative.chars},
+                    true, false, false);
+  });
+}
+
+function script_to_narrative(script, too_many) {
+  var too_many = too_many || 5;
+
+  var char_ids = {};
+  var next_id = 0;
+  var char_to_id = function(name) {
+    if (char_ids[name] == null) {
+      char_ids[name] = next_id;
+      next_id += 1;
+    }
+    return char_ids[name];
+  };
+
+  var locations = get_locations(script);
+  var frequent = most_frequent_characters(locations);
+
+  var pos = 0;
+  var scenes = [];
+  locations.forEach(function(loc) {
+    var scene = {
+      duration: 2,
+      start: pos,
+      chars: [...new Set(get_characters(loc))]
+        .map(char_to_id).sort()
+    };
+
+    if (scene.chars.length > too_many) {
+      scene.chars = scene.chars.filter(function(c) {
+        return frequent.has(c);
+      });
+    }
+    scene.chars = [...new Set(scene.chars).keys()].sort();
+    pos += 1
+
+    if (scene.chars.length > 0) {
+      scenes.push(scene);
+    }
+  });
+
+  return {
+    narrative: scenes,
+    chars: char_ids,
+  }
+}
+
+function get_json(url, cb) {
+  var xhr = new XMLHttpRequest()
+  xhr.open("GET", url)
+  xhr.send()
+  xhr.onload = function() { cb(JSON.parse(xhr.responseText)); };
+  return xhr;
+}
+
+function get_locations(script) {
+  return script.reduce(function(locations, scene) {
+    return locations.concat(scene);
+  });
+}
+
+function most_frequent_characters(locations, num_chars) {
+  var num_chars = num_chars || 5;
+  var occurrences = {};
+  locations.forEach(function(loc) {
+    loc.parts
+      .filter(is_dialog)
+      .forEach(function(dialog) {
+        var speaker = normalize_name(dialog.character);
+        occurrences[speaker] = (occurrences[speaker] || 0) + 1
+      });
+  });
+  var frequent = Object.keys(occurrences)
+      .sort(function(a, b) {
+        return occurrences[a] - occurrences[b]
+      })
+      .reverse()
+      .splice(0, num_chars);
+  return new Set(frequent);
+}
+
+function is_dialog(part) {
+  return part.dialog != null;
+}
+
+function with_characters(chars, locations) {
+  return locations.map(function(loc) {
+    return loc.parts
+      .filter(function(part) {
+        return part.dialog != null
+          && chars.has(normalize_name(part.character))
+      })
+  })
+    .filter(function(loc) { return loc.length != 0; });
+}
+
+function get_characters(loc) {
+  return loc.parts
+    .filter(function(part) {
+      return part.dialog != null && part.character.trim() != ""
+    })
+    .map(function(part) {
+      return normalize_name(part.character)
+    });
+}
+
+function normalize_name(name) {
+  return name.trim().split(/[^ \.\-A-Za-z]/)[0].trim().toUpperCase();
+}
+
+function is_dialog(part) {
+  return part.dialog != null;
+}
+
 function draw_plot_chart(name, safe_name, prefix, tie_breaker, center_sort, collapse) {
-  var folder = prefix;
+  var folder = prefix.name;
   
-  d3.json(prefix + ".narrative.json", function(j) {
+  (function(j) {
     var margin = {top: 20, right: 25, bottom: 20, left: 1};
     var width = raw_chart_width - margin.left - margin.right;
 
-    var jscenes = j['scenes'];
+    var jscenes = j; //j['scenes'];
     // This calculation is only relevant for equal_scenes = true
     var scene_width = (width-longest_name)/(jscenes.length+1);
 
@@ -42,7 +167,7 @@ function draw_plot_chart(name, safe_name, prefix, tie_breaker, center_sort, coll
     total_panels += panel_shift;
     panel_width = Math.min(width/total_panels, 15);
 
-    d3.json(prefix + ".chars.json", function(x) {
+    (function(x) {
       var i = 0;
       var xchars = Object.keys(x).map(function(c) {
         return {
@@ -197,6 +322,6 @@ function draw_plot_chart(name, safe_name, prefix, tie_breaker, center_sort, coll
       */
       draw_links(links, svg);
       draw_nodes(scenes, svg, width, height, folder, raw_chart_height, safe_name);
-    }); // d3.xml (read chars)
-  }); // d3.json (read scenes)
+    })(prefix.chars); // d3.xml (read chars)
+  })(prefix.narrative); // d3.json (read scenes)
 }
