@@ -1,3 +1,5 @@
+"use strict";
+
 function draw_plot_chart(name, safe_name, prefix, tie_breaker, center_sort, collapse) {
   var folder = prefix;
   
@@ -142,7 +144,7 @@ function draw_plot_chart(name, safe_name, prefix, tie_breaker, center_sort, coll
       
       scenes.forEach(function(s) {
 	if (!s.char_node) {
-	  first_scenes = [];
+	  var first_scenes = [];
 	  //ys = [];
 	  s.in_links.forEach(function(l) {
 	    if (l.from.char_node) {
