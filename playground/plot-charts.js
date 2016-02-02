@@ -22,11 +22,11 @@ function script_to_narrative(script, options) {
   var pos = 0;
   var scenes = [];
   locations.forEach(function(loc) {
+    get_characters(loc).map(char_to_id);
     var scene = {
       duration: 2,
       start: pos,
-      chars: [...new Set(get_characters(loc))]
-        .map(char_to_id).sort()
+      chars: [...new Set(get_characters(loc))].sort()
     };
 
     if (fixed_characters || scene.chars.length > too_many) {
@@ -34,8 +34,8 @@ function script_to_narrative(script, options) {
         return frequent.has(c);
       });
     }
-    scene.chars = [...new Set(scene.chars).keys()].sort();
-    pos += 1
+    scene.chars = [...new Set(scene.chars).keys()].map(char_to_id).sort();
+    pos += 1;
 
     if (scene.chars.length > 0) {
       scenes.push(scene);
