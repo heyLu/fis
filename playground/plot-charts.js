@@ -183,47 +183,6 @@ function draw_plot_chart(name, safe_name, prefix, tie_breaker, center_sort, coll
       var raw_chart_height = 360;
       var height = raw_chart_height - margin.top - margin.bottom;
 
-      // Insert the collapsable title
-      /*
-	var sign, disp;
-	if (collapse) {
-	sign = "+";
-	disp = "none";
-	} else { 
-	sign = "-";
-	disp = "inherit";
-	}
-      */
-      /*var svg = d3.select("#chart").append("text")
-	  .attr("x", 0)
-	  .attr("y", 0)
-	  .attr("dy", ".35em")
-	  .attr("text-anchor", "end")
-	  .attr("class", "comic-title")
-	  .attr("transform", null)
-	  .attr("id", safe_name)
-	  .text(" - " + name)
-	  .data([{name: " - " + name, folder: folder, safe_name: safe_name}])
-	  .style("display", "block")
-	  .on("click", function(d) {
-	    var nodes = d3.selectAll(".chart").selectAll("[id=\"" + d.safe_name + "\"]");
-	    var node;
-	    for (var i = 0; i < nodes.length; i++) {
-	      if (nodes[i].parentNode.id == d.safe_name) {
-		node = nodes[i].parentNode;
-		break;
-	      }
-	    }
-	    if (d.name[1] == '-') {
-	      node.style.display = "none";
-	      d.name = d.name.replace("-", "+");
-	    } else {
-	      node.style.display = "inherit";
-	      d.name = d.name.replace("+", "-");
-	    }
-	    d3.select(this).text(d.name);
-	  });*/
-
       var svg = d3.select("#chart").append("svg")
 	  .attr("width", width + margin.left + margin.right)
 	  .attr("height", height + margin.top + margin.bottom)
@@ -310,16 +269,6 @@ function draw_plot_chart(name, safe_name, prefix, tie_breaker, center_sort, coll
       raw_chart_height = height + margin.top + margin.bottom;
       d3.select('svg#' + safe_name).style("height", raw_chart_height);
 
-      /*
-	groups.forEach(function(g) {
-	d3.select("svg#" + folder).append("rect")
-	.attr("width", 10)
-	.attr("height", g.max-g.min)
-	.attr("x", 0)
-	.attr("y", g.min+margin.top)
-	.style("color", color(g.id));
-	});
-      */
       draw_links(links, svg);
       draw_nodes(scenes, svg, width, height, folder, raw_chart_height, safe_name);
     })(prefix.chars); // d3.xml (read chars)
