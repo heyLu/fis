@@ -1,18 +1,5 @@
 "use strict";
 
-function run_test() {
-  get_json("toy-story-3.json", function(script) {
-    window.script = script;
-    window.narrative = script_to_narrative(script);
-
-    draw_plot_chart("Toy Story 3", "toy-story-3",
-                    {name: "toy-story-3.xml",
-                     narrative: narrative.narrative,
-                     chars: narrative.chars},
-                    true, false, false);
-  });
-}
-
 function script_to_narrative(script, options) {
   var options = options || {};
   var too_many = options.too_many || 5;
@@ -274,18 +261,6 @@ function draw_plot_chart(name, safe_name, prefix, tie_breaker, center_sort, coll
       draw_nodes(scenes, svg, width, height, folder, raw_chart_height, safe_name);
     })(prefix.chars); // d3.xml (read chars)
   })(prefix.narrative); // d3.json (read scenes)
-}
-
-function draw_plot_chart2(title, safeName, url) {
-  get_json(url, function(script) {
-    var narrative = script_to_narrative(script);
-
-    draw_plot_chart(title, safeName,
-                    {name: url,
-                     narrative: narrative.narrative,
-                     chars: narrative.chars},
-                    true, false, false);
-  });
 }
 
 function PlotChart(selector, id, url, options) {
