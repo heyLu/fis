@@ -28,9 +28,6 @@ class AppArgument
   @Option(name = "-m", aliases = { "--movieDir" }, required = false, usage = "input dir with movie files in json format")
   public String movieFilesPath = "(default value)";
   
-  @Option(name = "-f", aliases = { "--flowChartDir" }, required = false, usage = "input dir with movie files in json format")
-  public String flowChartPath = "(default value)";
-  
   @Option(name = "-a", aliases = { "--apiKey" }, required = false, usage = "api key for tmdb")
   public String apiKey = "(default value)";
 }
@@ -58,8 +55,7 @@ public class RestAPI {
           return;
         }
         System.out.println("-Arg1 was " + va.movieFilesPath);
-        System.out.println("-Arg2 was " + va.flowChartPath);
-        System.out.println("-Arg3 was " + va.apiKey);
+        System.out.println("-Arg2 was " + va.apiKey);
         
         // Test Movie ID --> Avatar --> 19995
         
@@ -136,29 +132,6 @@ public class RestAPI {
                 destinationPath = "/public/res/";
             } else {
                 destinationPath = va.movieFilesPath + "\\" + filename;
-            }
-            System.out.println("Fullpath: "+destinationPath);
-            // check if file exist
-            File f = new File(destinationPath);
-            if(f.exists() && !f.isDirectory()) {
-                //System.out.println("Datei da!");
-                return readFile(destinationPath, StandardCharsets.UTF_8);
-            } else {
-                //System.out.println("Datei nicht da!");
-                halt(400, "{\"error\": \"File not found!\"}");
-                return "";
-            }
-        });
-        
-        // deliver movie flowgraph data
-        get("/api/movie/flowgraph/:name", (request, response) -> {
-            response.type("application/json");
-            String destinationPath = "";
-            String filename = request.params(":name");
-            if(va.movieFilesPath == "(default value)"){
-                destinationPath = "/public/res/";
-            } else {
-                destinationPath = va.flowChartPath + "\\" + filename;
             }
             System.out.println("Fullpath: "+destinationPath);
             // check if file exist
