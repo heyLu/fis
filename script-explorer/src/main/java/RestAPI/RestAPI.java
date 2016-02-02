@@ -131,7 +131,7 @@ public class RestAPI {
             if(va.movieFilesPath == "(default value)"){
                 destinationPath = "/public/res/";
             } else {
-                destinationPath = va.movieFilesPath + "\\" + filename;
+                destinationPath = va.movieFilesPath + "/" + filename;
             }
             System.out.println("Fullpath: "+destinationPath);
             // check if file exist
