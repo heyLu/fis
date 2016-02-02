@@ -289,24 +289,24 @@ function draw_plot_chart2(title, safeName, url) {
 }
 
 function PlotChart(selector, id, url, options) {
-  var script = null;
-  var narrative = null;
+  var chart = {
+    script: null,
+    narrative: null
+  };
 
   get_json(url, function(s) {
-    script = s;
-    narrative = script_to_narrative(script, options);
+    chart.script = s;
+    chart.narrative = script_to_narrative(chart.script, options);
 
-    draw_plot_chart(selector, id, narrative, true, false, false);
+    draw_plot_chart(selector, id, chart.narrative, true, false, false);
   });
 
-  return {
-    script: script,
-    narrative: narrative,
-    redraw: function(options) {
-      narrative = script_to_narrative(script, options);
+  chart.redraw = function(options) {
+    chart.narrative = script_to_narrative(chart.script, options);
 
-      document.querySelector("#chart svg").remove();
-      draw_plot_chart(selector, id, narrative, true, false, false);
-    }
-  }
+    document.querySelector("#chart svg").remove();
+    draw_plot_chart(selector, id, chart.narrative, true, false, false);
+  };
+
+  return chart;
 }
