@@ -194,7 +194,7 @@ function draw_plot_chart(name, safe_name, prefix, tie_breaker, center_sort, coll
 	disp = "inherit";
 	}
       */
-      var svg = d3.select("#chart").append("text")
+      /*var svg = d3.select("#chart").append("text")
 	  .attr("x", 0)
 	  .attr("y", 0)
 	  .attr("dy", ".35em")
@@ -222,7 +222,7 @@ function draw_plot_chart(name, safe_name, prefix, tie_breaker, center_sort, coll
 	      d.name = d.name.replace("+", "-");
 	    }
 	    d3.select(this).text(d.name);
-	  });
+	  });*/
 
       var svg = d3.select("#chart").append("svg")
 	  .attr("width", width + margin.left + margin.right)
