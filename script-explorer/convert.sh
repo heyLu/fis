@@ -1,4 +1,6 @@
 #!/bin/sh
 
-pdftohtml -xml -i "$1.pdf"
-../script-extractor/target/debug/script-extractor --json "$1.xml" > "src/main/resources/public/res/`basename "$1"`.json"
+script=$1
+name="${script%.*}"
+pdftohtml -xml -i "$name.pdf"
+../script-extractor/target/debug/script-extractor --json "$name.xml" > "src/main/resources/public/res/`basename "$name"`.json"
