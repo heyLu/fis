@@ -45,6 +45,7 @@ function script_to_narrative(script, options) {
   return {
     narrative: scenes,
     chars: char_ids,
+    groups: options.groups || {}
   }
 }
 
@@ -149,7 +150,7 @@ function draw_plot_chart(name, safe_name, prefix, tie_breaker, center_sort, coll
         return {
           name: c,
           id: x[c],
-          group: 1 //i++
+          group: prefix.groups[c] || 1
         }
       });
 
