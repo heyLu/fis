@@ -112,7 +112,7 @@ app.controller('movieCtrl', function($scope, $http, $sce, $compile, $rootScope) 
         if (previousChart != null) {
           previousChart.remove();
         }
-        var p = new PlotChart("#chart", "plot", $scope.movie);
+        p = new PlotChart("#chart", "plot", $scope.movie);
       } else {
         // check which functions to display in navbar
         if( $scope.movieID == 0) {
