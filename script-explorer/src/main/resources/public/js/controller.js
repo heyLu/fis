@@ -187,6 +187,13 @@ app.controller('movieCtrl', function($scope, $http, $sce, $compile, $rootScope) 
 
   // helper functions
   // ###############################
+  $(document).keypress(function(e) {
+    if(e.which == 13) {
+      //alert('You pressed enter!');
+      $scope.selectMovie();
+    }
+  });
+
   // helper to display stars
   $scope.getNumber = function(num) {
     return new Array(num);
