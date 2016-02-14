@@ -125,19 +125,18 @@ public class RestAPI {
         // deliver movie scripts as json
         get("/api/movie/json/:name", (request, response) -> {
             response.type("application/json");
-            String destinationPath = "";
+            Path destinationPath = null;
             String filename = request.params(":name");
-            if(va.movieFilesPath == "(default value)"){
-                destinationPath = "/public/res/";
+            if(va.movieFilesPath == ""){
+                destinationPath = Paths.get("/public/res/");
             } else {
-                destinationPath = va.movieFilesPath + "/" + filename;
+                destinationPath = Paths.get(va.movieFilesPath).resolve(filename);
             }
             System.out.println("Fullpath: "+destinationPath);
             // check if file exist
-            File f = new File(destinationPath);
-            if(f.exists() && !f.isDirectory()) {
+            if(Files.isReadable(destinationPath)) {
                 //System.out.println("Datei da!");
-                return readFile(destinationPath, StandardCharsets.UTF_8);
+                return readFile(destinationPath.toString(), StandardCharsets.UTF_8);
             } else {
                 //System.out.println("Datei nicht da!");
                 halt(400, "{\"error\": \"File not found!\"}");
