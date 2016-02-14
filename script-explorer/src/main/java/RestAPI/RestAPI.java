@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.kohsuke.args4j.CmdLineException;
@@ -25,11 +26,11 @@ import requestTMDB.GetMovieData;
 */
 class AppArgument
 {
-  @Option(name = "-m", aliases = { "--movieDir" }, required = false, usage = "input dir with movie files in json format")
-  public String movieFilesPath = "(default value)";
+  @Option(name = "-m", aliases = { "--movieDir" }, required = true, usage = "input dir with movie files in json format")
+  public String movieFilesPath = "";
   
-  @Option(name = "-a", aliases = { "--apiKey" }, required = false, usage = "api key for tmdb")
-  public String apiKey = "(default value)";
+  @Option(name = "-a", aliases = { "--apiKey" }, required = true, usage = "api key for tmdb")
+  public String apiKey = "";
 }
 
 /**
@@ -54,10 +55,8 @@ public class RestAPI {
           System.err.println();
           return;
         }
-        System.out.println("-Arg1 was " + va.movieFilesPath);
-        System.out.println("-Arg2 was " + va.apiKey);
-        
-        // Test Movie ID --> Avatar --> 19995
+        System.out.println("Using movieDir " + Paths.get(va.movieFilesPath));
+        System.out.println("Using apiKey " + va.apiKey);
         
         // Init Rsponse
         // ============
