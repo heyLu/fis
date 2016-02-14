@@ -1,24 +1,24 @@
 # script-explorer
 
-Provides a webinterface to explore movie scripts using spark.
+Provides a web interface to explore movie scripts using spark and angular.
 
 ## Quickstart
 
-You neet to have Maven and Java 8 installed.
+You need to have Maven and Java 8 installed.
 
 ```
 $ mvn package
-$ java -jar target/wcm-prak-standalone.jar
+$ java -jar target/wcm-prak-standalone.jar -m <script-folder> -a <api-key>
 ```
 
-Parameter Options:
+Use your browser to open [http://localhost:4567](http://localhost:4567).
+
+### Command line options:
+
 ```
--m (alias: --movieDir) Path to folder contains parsed pdf script in json format.
+-m (alias: --movieDir) Folder containing scripts in json format.
 -a (alias: --apiKey) The API Key to access tmdb via api.
 ```
 
-```
-Attention: The json files have to match one of the entries in
-movieNames.json file ("src/main/resources/public/res").
-```
-Use your browser to open http://localhost:4567/.
+**Warning**: The names of the json files currently have to match the ones
+in the movieNames.json file ("src/main/resources/public/res").
