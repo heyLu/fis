@@ -9,7 +9,8 @@ your system packages are too old.
 
 ```
 $ pdftohtml -i -xml <some-script>.pdf
-$ cargo run -- --json <some-script>.xml > <some-script>.json
+$ cargo build
+$ target/debug/script-extractor --json <some-script>.xml > <some-script>.json
 ```
 
 ## Documentation
